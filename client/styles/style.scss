@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css?family=Fredoka+One');
+@import url('https://fonts.googleapis.com/css?family=Lekton|Montserrat+Alternates|Muli|Quicksand');
+@import '../../node_modules/foundation-sites/scss/foundation';
+@import url('https://fonts.googleapis.com/css?family=VT323');
+
+@include foundation-flex-grid;
+@include foundation-flex-classes;
+@include foundation-everything;
+
+// GLOBAL
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  color: #000;
+  font-family: 'VT323', monospace;
+  font-weight: normal;
+}
+
+input {
+  border: 0 !important;
+  color: #333 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-bottom: 1px solid #333 !important;
+}
+
+input::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #8f8f8f;
+  opacity: 1; /* Firefox */
+}
+
+input::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: #8f8f8f;
+}
+input::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #8f8f8f;
+}
+input:-ms-input-placeholder {
+  /* IE 10+ */
+  color: #8f8f8f;
+}
+input:-moz-placeholder {
+  /* Firefox 18- */
+  color: #8f8f8f;
+}
+
+a {
+  color: #1779ba;
+  text-decoration: none;
+  cursor: pointer !important;
+}
+
+button {
+  padding: 10px 20px !important;
+  margin-bottom: 10px;
+  font-size: 14px !important;
+  background-color: #ff3232 !important;
+  font-weight: bold !important;
+  color: #fff !important;
+  margin-top: 20px;
+  cursor: pointer !important;
+  border-bottom: 1px solid #000;
+}
+
+// BODY CONTAINER
+.body_container {
+  position: absolute;
+  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  height: 100vh;
+
+  .main-title {
+    color: #333;
+    font-size: 20pt;
+    margin-top: 30px;
+    margin-bottom: 0;
+    text-align: center;
+  }
+
+  .content-container {
+    width: 50%;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+}
