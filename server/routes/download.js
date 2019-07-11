@@ -1,12 +1,13 @@
-const { Router } = require('express');
-const pool = require('../../Data/index');
-const router = Router();
-const uniqid = require('uniqid');
-const puppeteer = require('puppeteer');
-const fullPageScreenshot = require('puppeteer-full-page-screenshot');
+const express = require('express')
+const router = express.Router()
+const path = require('path');
 
 router.post('/download', (req, res, next) => {
-  res.download(`./screenshot.png`, function (err) {
+  console.log('getting download')
+  // res.json({fuck: 'you'})
+
+
+  res.download(path.join(__dirname, '../../screenshot.png'), 'screenshot.png', (err) => {
     if (err) {
       // Handle error, but keep in mind the response may be partially-sent
       // so check res.headersSent
@@ -18,4 +19,4 @@ router.post('/download', (req, res, next) => {
   })
 })
 
-module.exports = router;
+module.exports = router

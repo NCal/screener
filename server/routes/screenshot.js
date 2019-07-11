@@ -17,8 +17,8 @@ let screenshot = async function (url) {
   await page.goto(pageUrl)
   page.setViewport({ width: 1920, height: 1080 })
 
-  await page.screenshot({ path: `screenshot.png` });
-  // await fullPageScreenshot.default(page, { path: 'screenshot.png' });
+  // await page.screenshot({ path: `screenshot.png` });
+  await fullPageScreenshot.default(page, { path: 'screenshot.png' });
   await browser.close()
 }
 

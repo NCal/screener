@@ -9,7 +9,8 @@ class Main extends React.Component {
       input:'', 
       browser: null, 
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
-      ready: false
+      ready: false,
+      png: null
     };
   }
 
@@ -39,6 +40,16 @@ class Main extends React.Component {
     }
   }
 
+
+  download = () =>{
+    axios
+      .post('/download', {}).then((res) => {
+        console.log('download res image', res.data)
+      }).catch((err) => {
+        console.log('errrrror', err)
+      })
+  }
+
   screenshot = () => {
     console.log('screenshot');
     console.log('make a call to backend')
@@ -47,14 +58,15 @@ class Main extends React.Component {
       .post('/screenshot', { url: this.state.input })
       .then(res => {
         console.log('res', res);
-        // if (res.data.success){
-        //   axios
-        //     .post('/download', {}).then((res)=>{
-        //       console.log('res', res);
-        //     }).catch((err)=>{
-        //       console.log('errrrror', err)
-        //     })
-        // }
+        if (res.data.success){
+          axios
+            .post('/download', {}).then((res)=>{
+              console.log('download res image', res.data)
+              this.setState({png: res.data})
+            }).catch((err)=>{
+              console.log('errrrror', err)
+            })
+        }
       })
       .catch(function (error) {
         console.log(error);
@@ -68,6 +80,10 @@ class Main extends React.Component {
       <p>Enter a Page to Screenshot</p>
         <input type="text" value={this.state.input} onChange={this.handleInput}></input>
         <input type="button" value="screenshot" onClick={this.fixProtocol}></input>
+        <input type="button" value="download" onClick={this.download}></input>
+        <a download="custom-filename.png" href="/screenshot.png" title="ImageName">
+          <img alt="ImageName" src={`${this.state.png}`}/>
+        </a>
       </div>
     );
   }

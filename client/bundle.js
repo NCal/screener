@@ -4774,20 +4774,28 @@ var Main = function (_React$Component) {
       }
     };
 
+    _this.download = function () {
+      _axios2.default.post('/download', {}).then(function (res) {
+        console.log('download res image', res.data);
+      }).catch(function (err) {
+        console.log('errrrror', err);
+      });
+    };
+
     _this.screenshot = function () {
       console.log('screenshot');
       console.log('make a call to backend');
 
       _axios2.default.post('/screenshot', { url: _this.state.input }).then(function (res) {
         console.log('res', res);
-        // if (res.data.success){
-        //   axios
-        //     .post('/download', {}).then((res)=>{
-        //       console.log('res', res);
-        //     }).catch((err)=>{
-        //       console.log('errrrror', err)
-        //     })
-        // }
+        if (res.data.success) {
+          _axios2.default.post('/download', {}).then(function (res) {
+            console.log('download res image', res.data);
+            _this.setState({ png: res.data });
+          }).catch(function (err) {
+            console.log('errrrror', err);
+          });
+        }
       }).catch(function (error) {
         console.log(error);
       });
@@ -4803,7 +4811,13 @@ var Main = function (_React$Component) {
           'Enter a Page to Screenshot'
         ),
         _react2.default.createElement('input', { type: 'text', value: _this.state.input, onChange: _this.handleInput }),
-        _react2.default.createElement('input', { type: 'button', value: 'screenshot', onClick: _this.fixProtocol })
+        _react2.default.createElement('input', { type: 'button', value: 'screenshot', onClick: _this.fixProtocol }),
+        _react2.default.createElement('input', { type: 'button', value: 'download', onClick: _this.download }),
+        _react2.default.createElement(
+          'a',
+          { download: 'custom-filename.png', href: '/screenshot.png', title: 'ImageName' },
+          _react2.default.createElement('img', { alt: 'ImageName', src: '' + _this.state.png })
+        )
       );
     };
 
@@ -4811,7 +4825,8 @@ var Main = function (_React$Component) {
       input: '',
       browser: null,
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
-      ready: false
+      ready: false,
+      png: null
     };
     return _this;
   }
