@@ -27,21 +27,21 @@ class Main extends React.Component {
   }
 
   fixProtocol = () => {
-    if (this.state.regex.test(this.state.input)) {
-      if (/^http?:\/\//i.test(this.state.input)) {
-        console.log('no protocol')
-        let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
-        this.setState({ input: `https://${noProtocol}` });
-      }
+    // if (this.state.regex.test(this.state.input)) {
+    //   if (/^http?:\/\//i.test(this.state.input)) {
+    //     console.log('no protocol')
+    //     let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
+    //     this.setState({ input: `https://${noProtocol}` });
+    //   }
 
-      if (!/^https?:\/\//i.test(this.state.input)) {
-        this.setState({ input: `https://${this.state.input}` });
-      }
+    //   if (!/^https?:\/\//i.test(this.state.input)) {
+    //     this.setState({ input: `https://${this.state.input}` });
+    //   }
     
     this.setState({ ready: true }, ()=>{
       this.screenshot();
     });
-    }
+    // }
   }
 
   download = () =>{

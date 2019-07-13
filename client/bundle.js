@@ -5079,21 +5079,21 @@ var Main = function (_React$Component) {
     };
 
     _this.fixProtocol = function () {
-      if (_this.state.regex.test(_this.state.input)) {
-        if (/^http?:\/\//i.test(_this.state.input)) {
-          console.log('no protocol');
-          var noProtocol = _this.state.input.split('').splice(7, _this.state.input.length).join('');
-          _this.setState({ input: 'https://' + noProtocol });
-        }
+      // if (this.state.regex.test(this.state.input)) {
+      //   if (/^http?:\/\//i.test(this.state.input)) {
+      //     console.log('no protocol')
+      //     let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
+      //     this.setState({ input: `https://${noProtocol}` });
+      //   }
 
-        if (!/^https?:\/\//i.test(_this.state.input)) {
-          _this.setState({ input: 'https://' + _this.state.input });
-        }
+      //   if (!/^https?:\/\//i.test(this.state.input)) {
+      //     this.setState({ input: `https://${this.state.input}` });
+      //   }
 
-        _this.setState({ ready: true }, function () {
-          _this.screenshot();
-        });
-      }
+      _this.setState({ ready: true }, function () {
+        _this.screenshot();
+      });
+      // }
     };
 
     _this.download = function () {
