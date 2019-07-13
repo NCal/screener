@@ -40,7 +40,7 @@
     "pg": "^7.4.1",
     "prop-types": "^15.6.0",
     "puppeteer": "^1.18.1",
-    "puppeteer-full-page-screenshot": "^1.0.3",
+    "puppeteer-full-page-screenshot": "git+ssh://git@github.com/NCal/puppeteer-full-page-screenshot.git#e2693292c6308a4a31d5d83d46eff83f5e6ab075",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-foundation": "^0.8.2",

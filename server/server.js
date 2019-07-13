@@ -28,6 +28,8 @@ app.use(logger('dev'))
 app.use(bodyParser.json({limit: '50mb'}))
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 app.use(bodyParser.json())
+app.use('/static', express.static(path.join(__dirname, 'public')))
+
 app.get('/download', download)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/index.html'))

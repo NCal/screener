@@ -9,11 +9,11 @@ router.get('/download', (req, res, next) => {
   // console.log('getting holy fuck', res)
   let name = uniqid.time('screenshot-')
 
-  res.download(path.join(__dirname, '../../screenshot.png'), `${name}.png`, (err) => {
+  res.download(path.join(__dirname, '../public/screenshot.png'), `${name}.png`, (err) => {
     if (err) {
       // Handle error, but keep in mind the response may be partially-sent
       // so check res.headersSent
-      console.log('errrr', err)
+      console.log('download error', err)
     } else {
       console.log('success! ✅')
       // res.json({ success: true })
