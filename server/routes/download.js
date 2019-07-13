@@ -2,10 +2,14 @@ const express = require('express')
 const router = express.Router()
 const path = require('path')
 const fs = require('fs')
+const uniqid = require('uniqid')
 
 router.get('/download', (req, res, next) => {
-  console.log('getting download', req)
-  res.download(path.join(__dirname, '../../screenshot.png'), `screenshot.png`, (err) => {
+  // console.log('getting download', req)
+  // console.log('getting holy fuck', res)
+  let name = uniqid.time('screenshot-')
+
+  res.download(path.join(__dirname, '../../screenshot.png'), `${name}.png`, (err) => {
     if (err) {
       // Handle error, but keep in mind the response may be partially-sent
       // so check res.headersSent

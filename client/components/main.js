@@ -60,7 +60,11 @@ class Main extends React.Component {
         if (res.data.success){
           console.log('success screenshot');
           axios
-            .get(`/download`, { holyFuck :this.state.input}).then((res)=>{
+            .get(`/download`, { 
+              params: {
+                searchQuery: this.state.inut
+              }
+          }).then((res)=>{
               console.log('download res image', res.data)
               this.setState({png: res.data},()=>{
                 this.setState({ loading: false });

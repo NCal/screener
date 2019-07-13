@@ -4792,7 +4792,11 @@ var Main = function (_React$Component) {
 
         if (res.data.success) {
           console.log('success screenshot');
-          _axios2.default.get('/download', { holyFuck: _this.state.input }).then(function (res) {
+          _axios2.default.get('/download', {
+            params: {
+              searchQuery: _this.state.inut
+            }
+          }).then(function (res) {
             console.log('download res image', res.data);
             _this.setState({ png: res.data }, function () {
               _this.setState({ loading: false });
