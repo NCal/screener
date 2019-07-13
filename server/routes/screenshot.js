@@ -7,7 +7,7 @@ const fullPageScreenshot = require('puppeteer-full-page-screenshot')
 
 let screenshot = async function (url) {
   let browser = await puppeteer.launch({
-    headless: false
+    headless: true
     // slowMo: 250 // slow down by 250ms
   })
 
@@ -17,13 +17,13 @@ let screenshot = async function (url) {
   await page.goto(pageUrl)
   page.setViewport({ width: 1920, height: 1080 })
 
-  // await page.screenshot({ path: `screenshot.png` });
-  await fullPageScreenshot.default(page, { path: 'screenshot.png' });
+  await page.screenshot({ path: `screenshot.png` })
+  // await fullPageScreenshot.default(page, { path: 'screenshot.png' })
   await browser.close()
 }
 
-router.post('/screenshot', (req, res, next) => {
-  screenshot(req.body.url)
+router.post('/screenshot', async (req, res, next) => {
+  await screenshot(req.body.url)
   res.json({success: true})
 })
 

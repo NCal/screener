@@ -6,6 +6,7 @@ const logger = require('morgan')
 const bodyParser = require('body-parser')
 const urlParse = require('url-parse')
 const session = require('express-session')
+const download = require('./routes/download.js')
 
 // IMPORTS //
 const indexRoutes = require('./routes/index')
@@ -27,7 +28,7 @@ app.use(logger('dev'))
 app.use(bodyParser.json({limit: '50mb'}))
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 app.use(bodyParser.json())
-
+app.get('/download', download)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/index.html'))
 })

@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from 'axios';
 
-
 class Main extends React.Component {
   constructor (props){
     super(props);
@@ -10,7 +9,8 @@ class Main extends React.Component {
       browser: null, 
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
-      png: null
+      png: null,
+      loading: false
     };
   }
 
@@ -19,8 +19,6 @@ class Main extends React.Component {
   handleInput = (e) => {
     this.setState({ input: e.target.value })
   }
-
-
 
   fixProtocol = () => {
     if (this.state.regex.test(this.state.input)) {
@@ -40,10 +38,9 @@ class Main extends React.Component {
     }
   }
 
-
   download = () =>{
     axios
-      .post('/download', {}).then((res) => {
+      .get('/download', {}).then((res) => {
         console.log('download res image', res.data)
       }).catch((err) => {
         console.log('errrrror', err)
@@ -53,16 +50,23 @@ class Main extends React.Component {
   screenshot = () => {
     console.log('screenshot');
     console.log('make a call to backend')
-
+    let screenshotLink = document.getElementsByClassName('screenshot')[0];
+    this.setState({ loading: true });
     axios
       .post('/screenshot', { url: this.state.input })
       .then(res => {
         console.log('res', res);
+
         if (res.data.success){
+          console.log('success screenshot');
           axios
-            .post('/download', {}).then((res)=>{
+            .get(`/download`, { holyFuck :this.state.input}).then((res)=>{
               console.log('download res image', res.data)
-              this.setState({png: res.data})
+              this.setState({png: res.data},()=>{
+                this.setState({ loading: false });
+                screenshotLink.click();
+              })
+              
             }).catch((err)=>{
               console.log('errrrror', err)
             })
@@ -73,17 +77,17 @@ class Main extends React.Component {
       });
   }
 
-
-  render =()=>{
+  render = () => {
     return (
       <div className="App">
       <p>Enter a Page to Screenshot</p>
         <input type="text" value={this.state.input} onChange={this.handleInput}></input>
         <input type="button" value="screenshot" onClick={this.fixProtocol}></input>
-        <input type="button" value="download" onClick={this.download}></input>
-        <a download="custom-filename.png" href="/screenshot.png" title="ImageName">
-          <img alt="ImageName" src={`${this.state.png}`}/>
-        </a>
+        {/*<input type="button" value="download" onClick={this.download}></input>*/}
+        {this.state.loading? <p>LOADING...</p>: null}
+
+        <a style={{visibility: 'hidden'}} download={this.state.png} className={'screenshot'} href="/download" target="_blank" title="screenshot"></a>
+
       </div>
     );
   }
