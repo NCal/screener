@@ -67,8 +67,9 @@ class Main extends React.Component {
           }).then((res)=>{
               console.log('download res image', res.data)
               this.setState({png: res.data},()=>{
-                this.setState({ loading: false });
-                screenshotLink.click();
+                this.setState({ loading: false },()=>{
+                  screenshotLink.click();
+                });
               })
               
             }).catch((err)=>{
@@ -88,7 +89,7 @@ class Main extends React.Component {
         <input type="text" value={this.state.input} onChange={this.handleInput}></input>
         <input type="button" value="screenshot" onClick={this.fixProtocol}></input>
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
-        {this.state.loading? <p>LOADING...</p>: null}
+        {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
 
         <a style={{visibility: 'hidden'}} download={this.state.png} className={'screenshot'} href="/download" target="_blank" title="screenshot"></a>
 

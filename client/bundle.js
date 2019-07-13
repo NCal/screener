@@ -4799,8 +4799,9 @@ var Main = function (_React$Component) {
           }).then(function (res) {
             console.log('download res image', res.data);
             _this.setState({ png: res.data }, function () {
-              _this.setState({ loading: false });
-              screenshotLink.click();
+              _this.setState({ loading: false }, function () {
+                screenshotLink.click();
+              });
             });
           }).catch(function (err) {
             console.log('errrrror', err);
@@ -4822,11 +4823,7 @@ var Main = function (_React$Component) {
         ),
         _react2.default.createElement('input', { type: 'text', value: _this.state.input, onChange: _this.handleInput }),
         _react2.default.createElement('input', { type: 'button', value: 'screenshot', onClick: _this.fixProtocol }),
-        _this.state.loading ? _react2.default.createElement(
-          'p',
-          null,
-          'LOADING...'
-        ) : null,
+        _this.state.loading ? _react2.default.createElement('img', { style: { display: 'block', filter: 'invert(1)', margin: '0 auto' }, src: 'http://aquar.io/images/loading.gif?2cab32044cb72a7a' }) : null,
         _react2.default.createElement('a', { style: { visibility: 'hidden' }, download: _this.state.png, className: 'screenshot', href: '/download', target: '_blank', title: 'screenshot' })
       );
     };
