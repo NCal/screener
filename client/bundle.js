@@ -5068,6 +5068,12 @@ var Main = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
 
+    _this.handleKeyDown = function (e) {
+      if (e.key == 'Enter') {
+        _this.fixProtocol();
+      }
+    };
+
     _this.handleInput = function (e) {
       _this.setState({ input: e.target.value });
     };
@@ -5138,7 +5144,7 @@ var Main = function (_React$Component) {
           null,
           'Enter a Page to Screenshot'
         ),
-        _react2.default.createElement('input', { type: 'text', value: _this.state.input, onChange: _this.handleInput }),
+        _react2.default.createElement('input', { type: 'text', value: _this.state.input, onChange: _this.handleInput, onKeyDown: _this.handleKeyDown }),
         _react2.default.createElement('input', { type: 'button', value: 'screenshot', onClick: _this.fixProtocol }),
         _this.state.loading ? _react2.default.createElement('img', { style: { display: 'block', filter: 'invert(1)', margin: '0 auto' }, src: 'http://aquar.io/images/loading.gif?2cab32044cb72a7a' }) : null,
         _react2.default.createElement(

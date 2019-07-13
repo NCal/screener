@@ -16,6 +16,12 @@ class Main extends React.Component {
 
   componentDidMount(){}
 
+  handleKeyDown = (e) => {
+    if (e.key == 'Enter') {
+      this.fixProtocol();
+    }
+  }
+
   handleInput = (e) => {
     this.setState({ input: e.target.value })
   }
@@ -87,7 +93,7 @@ class Main extends React.Component {
     return (
       <div className="App">
       <p>Enter a Page to Screenshot</p>
-        <input type="text" value={this.state.input} onChange={this.handleInput}></input>
+        <input type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         <input type="button" value="screenshot" onClick={this.fixProtocol}></input>
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
         {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
