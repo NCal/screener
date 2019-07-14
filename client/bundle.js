@@ -5116,7 +5116,9 @@ var Main = function (_React$Component) {
         if (res.data.success) {
           console.log('success screenshot');
           _this.setState({ loading: false, date: Date.now() }, function () {
-            setTimeout(window.location.reload(), 500);
+            setTimeout(function () {
+              window.location.reload();
+            }, 200);
             // screenshotLink.click(); 
           });
           // axios
