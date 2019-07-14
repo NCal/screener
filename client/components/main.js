@@ -62,14 +62,14 @@ class Main extends React.Component {
     axios
       .post('/screenshot', { url: this.state.input })
       .then(res => {
-        console.log('res', res);
+        console.log('res', res)
 
         if (res.data.success){
           console.log('success screenshot');
           this.setState({ loading: false, date: Date.now() }, () => {
             setTimeout(()=>{
               window.location.reload()
-            }, 200);
+            }, 200)
             // screenshotLink.click(); 
           });
           // axios
