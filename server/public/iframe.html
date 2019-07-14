@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Document</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+</head>
+
+<body>
+  <img class="screenshot" src='http://localhost:3000/static/screenshot.png' />
+  <script>
+    (function () {
+      console.log('iframe func')
+      let date = Date.now();
+      let screenshot = document.getElementsByClassName('screenshot')[0];
+      screenshot.src = 'http://localhost:3000/static/screenshot.png?' + date;
+    })();
+  </script>
+</body>
+
+</html>

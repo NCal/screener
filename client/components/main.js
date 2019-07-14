@@ -2,19 +2,20 @@ import React from 'react';
 import axios from 'axios';
 
 class Main extends React.Component {
-  constructor (props){
+  constructor(props) {
     super(props);
     this.state = {
-      input:'', 
-      browser: null, 
+      input: '',
+      browser: null,
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
       png: null,
-      loading: false
+      loading: false,
+      date: null
     };
   }
 
-  componentDidMount(){}
+  componentDidMount() { }
 
   handleKeyDown = (e) => {
     if (e.key == 'Enter') {
@@ -38,10 +39,10 @@ class Main extends React.Component {
         console.log('didnt find a protocol');
         this.setState({ input: `http://${this.state.input}` });
       }
-    
-    this.setState({ ready: true }, ()=>{
-      this.screenshot();
-    });
+
+      this.setState({ ready: true }, () => {
+        this.screenshot();
+      });
     }
   }
 
@@ -58,18 +59,24 @@ class Main extends React.Component {
     console.log('screenshot');
     console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
+    let iframeWindow = document.getElementsByTagName('iframe')[0]
+
     this.setState({ loading: true });
     axios
       .post('/screenshot', { url: this.state.input })
       .then(res => {
         console.log('res', res);
 
-        if (res.data.success){
+        if (res.data.success) {
           console.log('success screenshot');
-          this.setState({ loading: false, date: Date.now() }, () => {
-            setTimeout(window.location.reload(), 500);
-            // screenshotLink.click(); 
-          });
+          setTimeout(() => {
+            this.setState({ loading: false, date: Date.now() }, () => {
+              // screenshotLink.click(); 
+              iframeWindow.contentWindow.location.reload()
+              console.log('this.state.date', this.state.date);
+            })
+          }, 500);
+
           // axios
           //   .get(`/download`, { 
           //     params: {
@@ -83,7 +90,7 @@ class Main extends React.Component {
           //         // screenshotLink.click(); 
           //       });
           //     })
-              
+
           //   }).catch((err)=>{
           //     console.log('errrrror', err)
           //   })
@@ -97,19 +104,19 @@ class Main extends React.Component {
   render = () => {
     return (
       <div className="App">
-      <p>Enter a Page to Screenshot</p>
+        <p>Enter a Page to Screenshot</p>
         <input type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         <input type="button" value="screenshot" onClick={this.fixProtocol}></input>
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
-        {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
+        {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a" /> : null}
 
-        <a style={{visibility: ''}} download={this.state.png} className={'screenshot'} href="/download" target="_blank" title="screenshot">
-          <img src="/static/screenshot.png" alt={this.state.date} png={this.state.png}/>
+        <a style={{ visibility: '' }} download={this.state.png} className={'screenshot'} href="/download" target="_blank" title="screenshot">
+          <iframe src="http://localhost:3000/static/iframe.html" frameBorder="0" className={'.imgIframe'} width='100%' height='100%'></iframe>
         </a>
 
       </div>
     );
   }
 }
-
+// <img src={`http://localhost:3000/static/screenshot.png?${this.state.date}`} alt={this.state.date} png={this.state.png} />
 export default Main;

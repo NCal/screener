@@ -5109,16 +5109,22 @@ var Main = function (_React$Component) {
       console.log('screenshot');
       console.log('make a call to backend');
       var screenshotLink = document.getElementsByClassName('screenshot')[0];
+      var iframeWindow = document.getElementsByTagName('iframe')[0];
+
       _this.setState({ loading: true });
       _axios2.default.post('/screenshot', { url: _this.state.input }).then(function (res) {
         console.log('res', res);
 
         if (res.data.success) {
           console.log('success screenshot');
-          _this.setState({ loading: false, date: Date.now() }, function () {
-            setTimeout(window.location.reload(), 500);
-            // screenshotLink.click(); 
-          });
+          setTimeout(function () {
+            _this.setState({ loading: false, date: Date.now() }, function () {
+              // screenshotLink.click(); 
+              iframeWindow.contentWindow.location.reload();
+              console.log('this.state.date', _this.state.date);
+            });
+          }, 500);
+
           // axios
           //   .get(`/download`, { 
           //     params: {
@@ -5157,7 +5163,7 @@ var Main = function (_React$Component) {
         _react2.default.createElement(
           'a',
           { style: { visibility: '' }, download: _this.state.png, className: 'screenshot', href: '/download', target: '_blank', title: 'screenshot' },
-          _react2.default.createElement('img', { src: '/static/screenshot.png', alt: _this.state.date, png: _this.state.png })
+          _react2.default.createElement('iframe', { src: 'http://localhost:3000/static/iframe.html', frameBorder: '0', className: '.imgIframe', width: '100%', height: '100%' })
         )
       );
     };
@@ -5168,7 +5174,8 @@ var Main = function (_React$Component) {
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
       png: null,
-      loading: false
+      loading: false,
+      date: null
     };
     return _this;
   }
@@ -5180,6 +5187,8 @@ var Main = function (_React$Component) {
 
   return Main;
 }(_react2.default.Component);
+// <img src={`http://localhost:3000/static/screenshot.png?${this.state.date}`} alt={this.state.date} png={this.state.png} />
+
 
 exports.default = Main;
 
