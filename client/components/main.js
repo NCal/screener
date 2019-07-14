@@ -27,24 +27,25 @@ class Main extends React.Component {
   }
 
   fixProtocol = () => {
-    // if (this.state.regex.test(this.state.input)) {
-    //   if (/^http?:\/\//i.test(this.state.input)) {
-    //     console.log('no protocol')
-    //     let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
-    //     this.setState({ input: `https://${noProtocol}` });
-    //   }
+    if (this.state.regex.test(this.state.input)) {
+      // if (/^http?:\/\//i.test(this.state.input)) {
+      //   console.log('no protocol')
+      //   let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
+      //   this.setState({ input: `https://${noProtocol}` });
+      // }
 
-    //   if (!/^https?:\/\//i.test(this.state.input)) {
-    //     this.setState({ input: `https://${this.state.input}` });
-    //   }
+      if (!/^https?:\/\//i.test(this.state.input)) {
+        console.log('didnt find a protocol');
+        this.setState({ input: `http://${this.state.input}` });
+      }
     
     this.setState({ ready: true }, ()=>{
       this.screenshot();
     });
-    // }
+    }
   }
 
-  download = () =>{
+  download = () => {
     axios
       .get('/download', {}).then((res) => {
         console.log('download res image', res.data)
@@ -65,23 +66,27 @@ class Main extends React.Component {
 
         if (res.data.success){
           console.log('success screenshot');
-          axios
-            .get(`/download`, { 
-              params: {
-                searchQuery: this.state.inut
-              }
-          }).then((res)=>{
-              console.log('download res image', res.data)
-              this.setState({png: res.data},()=>{
-                this.setState({ loading: false, date: Date.now() },()=>{
-                  setTimeout(window.location.reload(), 500);
-                  // screenshotLink.click(); 
-                });
-              })
+          this.setState({ loading: false, date: Date.now() }, () => {
+            setTimeout(window.location.reload(), 500);
+            // screenshotLink.click(); 
+          });
+          // axios
+          //   .get(`/download`, { 
+          //     params: {
+          //       searchQuery: this.state.inut
+          //     }
+          // }).then((res)=>{
+          //     console.log('download res image', res.data)
+          //     this.setState({png: res.data},()=>{
+          //       this.setState({ loading: false, date: Date.now() },()=>{
+          //         setTimeout(window.location.reload(), 500);
+          //         // screenshotLink.click(); 
+          //       });
+          //     })
               
-            }).catch((err)=>{
-              console.log('errrrror', err)
-            })
+          //   }).catch((err)=>{
+          //     console.log('errrrror', err)
+          //   })
         }
       })
       .catch(function (error) {

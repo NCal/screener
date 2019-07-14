@@ -5079,21 +5079,22 @@ var Main = function (_React$Component) {
     };
 
     _this.fixProtocol = function () {
-      // if (this.state.regex.test(this.state.input)) {
-      //   if (/^http?:\/\//i.test(this.state.input)) {
-      //     console.log('no protocol')
-      //     let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
-      //     this.setState({ input: `https://${noProtocol}` });
-      //   }
+      if (_this.state.regex.test(_this.state.input)) {
+        // if (/^http?:\/\//i.test(this.state.input)) {
+        //   console.log('no protocol')
+        //   let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
+        //   this.setState({ input: `https://${noProtocol}` });
+        // }
 
-      //   if (!/^https?:\/\//i.test(this.state.input)) {
-      //     this.setState({ input: `https://${this.state.input}` });
-      //   }
+        if (!/^https?:\/\//i.test(_this.state.input)) {
+          console.log('didnt find a protocol');
+          _this.setState({ input: 'http://' + _this.state.input });
+        }
 
-      _this.setState({ ready: true }, function () {
-        _this.screenshot();
-      });
-      // }
+        _this.setState({ ready: true }, function () {
+          _this.screenshot();
+        });
+      }
     };
 
     _this.download = function () {
@@ -5114,21 +5115,27 @@ var Main = function (_React$Component) {
 
         if (res.data.success) {
           console.log('success screenshot');
-          _axios2.default.get('/download', {
-            params: {
-              searchQuery: _this.state.inut
-            }
-          }).then(function (res) {
-            console.log('download res image', res.data);
-            _this.setState({ png: res.data }, function () {
-              _this.setState({ loading: false, date: Date.now() }, function () {
-                setTimeout(window.location.reload(), 500);
-                // screenshotLink.click(); 
-              });
-            });
-          }).catch(function (err) {
-            console.log('errrrror', err);
+          _this.setState({ loading: false, date: Date.now() }, function () {
+            setTimeout(window.location.reload(), 500);
+            // screenshotLink.click(); 
           });
+          // axios
+          //   .get(`/download`, { 
+          //     params: {
+          //       searchQuery: this.state.inut
+          //     }
+          // }).then((res)=>{
+          //     console.log('download res image', res.data)
+          //     this.setState({png: res.data},()=>{
+          //       this.setState({ loading: false, date: Date.now() },()=>{
+          //         setTimeout(window.location.reload(), 500);
+          //         // screenshotLink.click(); 
+          //       });
+          //     })
+
+          //   }).catch((err)=>{
+          //     console.log('errrrror', err)
+          //   })
         }
       }).catch(function (error) {
         console.log(error);
