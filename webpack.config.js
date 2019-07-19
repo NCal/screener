@@ -1,6 +1,5 @@
-var path = require('path');
-var webpack = require('webpack');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+var path = require('path')
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 
 module.exports = {
   plugins: [
@@ -14,17 +13,17 @@ module.exports = {
   },
   module: {
     loaders: [
-    {
-      test: /.jsx?$/,
-      loader: 'babel-loader',
-      exclude: /node_modules/,
-      query: {
-        presets: [ "es2015", "react", "stage-0"]
-      }
-    }, 
-    {
-      test: /\.scss$/,
-      loader: 'style-loader!css-loader!sass-loader?sourceMap'
-    },]
+      {
+        test: /.jsx?$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/,
+        query: {
+          presets: ['es2015', 'react', 'stage-0']
+        }
+      },
+      {
+        test: /\.scss$/,
+        loader: 'style-loader!css-loader!sass-loader?sourceMap'
+      }]
   }
-};
+}
