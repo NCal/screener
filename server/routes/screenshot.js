@@ -30,7 +30,7 @@ const s3 = new AWS.S3({
 })
 const path = require('path')
 
-let file = path.join(__dirname, '../public/screenshot.png')
+let file = path.join(__dirname, '../public/screenshot.jpeg')
 
 const uploadFile = async function (fileName, photoName) {
   return new Promise((resolve, reject) => {
@@ -39,13 +39,14 @@ const uploadFile = async function (fileName, photoName) {
       if (err) throw err
       const params = {
         Bucket: 'screensh',
-        Key: `photos/${photoName}.png`,
-        ContentType: 'image/png',
+        Key: `photos/${photoName}.jpeg`,
+        ContentType: 'image/jpeg',
         ACL: 'public-read-write',
         Body: data
       }
       s3.upload(params, function (s3Err, data) {
         if (s3Err) { reject(s3Err) }
+        console.log(data);
         console.log(`File uploaded successfully at ${data.Location}`)
         resolve(`File uploaded successfully at ${data.Location}`)
       })
@@ -82,8 +83,8 @@ let screenshot = async function (url) {
   await page.setViewport({ width: 1920, height: 1080 })
   await page.goto(url)
 
-  // await page.screenshot({ path: `screenshot.png` })
-  await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
+  await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: false, type: 'jpeg', quality: 75 })
+  // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
   console.log('after screenshot')
   bar.tick()
   await browser.close()
@@ -91,7 +92,7 @@ let screenshot = async function (url) {
 
 let deleteFile = async function () {
   return new Promise((resolve, reject) => {
-    fs.unlink(path.join(__dirname, '../public/screenshot.png'), (err) => {
+    fs.unlink(path.join(__dirname, '../public/screenshot.jpeg'), (err) => {
       if (err) reject(err)
       console.log('screenshot was deleted');
       bar.tick(2)
@@ -133,7 +134,7 @@ let queryBucket = async function (photoName, callback) {
   return new Promise((resolve, reject) => {
     let opts = {
       resources: [
-        `https://screensh.s3.amazonaws.com/photos/${photoName}.png`
+        `https://screensh.s3.amazonaws.com/photos/${photoName}.jpeg`
       ],
       delay: 1000, // initial delay in ms, default 0
       interval: 100, // poll interval in ms, default 250ms
@@ -160,7 +161,7 @@ router.post('/screenshot', async (req, res, next) => {
   let photoName = `screenshot-${Date.now()}`
 
   await screenshot(req.body.url)
-  await checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.png'), 10000)
+  await checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.jpeg'), 10000)
   await uploadFile(file, photoName).then(() => {
     queryBucket(photoName).then(() => {
       deleteFile().then(() => {

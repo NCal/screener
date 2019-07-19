@@ -2,10 +2,10 @@ var path = require('path')
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 
 module.exports = {
-  plugins: [
-    new CaseSensitivePathsPlugin({debug: true})
-    // other plugins ...
-  ],
+  // plugins: [
+  //   new CaseSensitivePathsPlugin({debug: true})
+  //   // other plugins ...
+  // ],
   entry: './client/index.js',
   output: {
     path: path.join(__dirname, 'client'),

@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-class Main extends React.Component {
+class main extends React.Component {
   constructor (props){
     super(props);
     this.state = {
@@ -68,7 +68,7 @@ class Main extends React.Component {
         if (res.data.success){
           console.log('success screenshot', res.data.photoName);
           setTimeout(() => {
-            this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.png`, disabled: false }); 
+            this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false }); 
           }, 3000);
             // screenshotLink.click(); 
          
@@ -114,4 +114,4 @@ class Main extends React.Component {
   }
 }
 
-export default Main;
+export default main;

@@ -4022,13 +4022,13 @@ var _Layout = __webpack_require__(55);
 
 var _Layout2 = _interopRequireDefault(_Layout);
 
-var _Test = __webpack_require__(57);
+var _Test = __webpack_require__(56);
 
 var _Test2 = _interopRequireDefault(_Test);
 
-var _Main = __webpack_require__(56);
+var _main = __webpack_require__(57);
 
-var _Main2 = _interopRequireDefault(_Main);
+var _main2 = _interopRequireDefault(_main);
 
 var _axios = __webpack_require__(10);
 
@@ -4081,7 +4081,7 @@ var App = function (_React$Component) {
                 _react2.default.createElement(_reactRouterDom.Route, { path: '/', exact: true, render: function render(_ref) {
                     var props = _ref.props,
                         history = _ref.history;
-                    return _react2.default.createElement(_Main2.default, _extends({}, props, { history: history }));
+                    return _react2.default.createElement(_main2.default, _extends({}, props, { history: history }));
                   } })
               )
             )
@@ -5065,13 +5065,91 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Main = function (_React$Component) {
-  _inherits(Main, _React$Component);
+var Test = function (_Component) {
+  _inherits(Test, _Component);
 
-  function Main(props) {
-    _classCallCheck(this, Main);
+  function Test(props) {
+    _classCallCheck(this, Test);
 
-    var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Test.__proto__ || Object.getPrototypeOf(Test)).call(this, props));
+
+    _this.componentDidMount = function () {
+      var loc = String(_this.props.history.location.pathname);
+      var locLength = loc.length;
+      loc = loc.slice(1, loc.length);
+      console.log('str', loc);
+      _this.setState({ tag: loc }, function () {
+        _axios2.default.post('/redirect', { tag: _this.state.tag }).then(function (res) {
+          console.log('res', res);
+          console.log('url to redirect to', res.data[0].url);
+          var redirect = res.data[0].url;
+          var prot = 'http://';
+
+          if (redirect[0] !== 'h') {
+            redirect = prot.concat(redirect);
+          }
+          console.log('redirect', redirect);
+          location.href = redirect;
+        }).catch(function (err) {
+          console.log(err);
+        });
+      });
+    };
+
+    _this.state = {
+      tag: ''
+    };
+    return _this;
+  }
+
+  _createClass(Test, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement('div', { className: 'Test' });
+    }
+  }]);
+
+  return Test;
+}(_react.Component);
+
+exports.default = Test;
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(10);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var main = function (_React$Component) {
+  _inherits(main, _React$Component);
+
+  function main(props) {
+    _classCallCheck(this, main);
+
+    var _this = _possibleConstructorReturn(this, (main.__proto__ || Object.getPrototypeOf(main)).call(this, props));
 
     _this.handleKeyDown = function (e) {
       if (e.key == 'Enter') {
@@ -5122,7 +5200,7 @@ var Main = function (_React$Component) {
         if (res.data.success) {
           console.log('success screenshot', res.data.photoName);
           setTimeout(function () {
-            _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.png', disabled: false });
+            _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.jpeg', disabled: false });
           }, 3000);
           // screenshotLink.click(); 
 
@@ -5174,100 +5252,21 @@ var Main = function (_React$Component) {
       browser: null,
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
-      // png: null,
       loading: false,
       photoName: null
     };
     return _this;
   }
 
-  _createClass(Main, [{
+  _createClass(main, [{
     key: 'componentDidMount',
     value: function componentDidMount() {}
   }]);
 
-  return Main;
+  return main;
 }(_react2.default.Component);
 
-exports.default = Main;
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _axios = __webpack_require__(10);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Test = function (_Component) {
-  _inherits(Test, _Component);
-
-  function Test(props) {
-    _classCallCheck(this, Test);
-
-    var _this = _possibleConstructorReturn(this, (Test.__proto__ || Object.getPrototypeOf(Test)).call(this, props));
-
-    _this.componentDidMount = function () {
-      var loc = String(_this.props.history.location.pathname);
-      var locLength = loc.length;
-      loc = loc.slice(1, loc.length);
-      console.log('str', loc);
-      _this.setState({ tag: loc }, function () {
-        _axios2.default.post('/redirect', { tag: _this.state.tag }).then(function (res) {
-          console.log('res', res);
-          console.log('url to redirect to', res.data[0].url);
-          var redirect = res.data[0].url;
-          var prot = 'http://';
-
-          if (redirect[0] !== 'h') {
-            redirect = prot.concat(redirect);
-          }
-          console.log('redirect', redirect);
-          location.href = redirect;
-        }).catch(function (err) {
-          console.log(err);
-        });
-      });
-    };
-
-    _this.state = {
-      tag: ''
-    };
-    return _this;
-  }
-
-  _createClass(Test, [{
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement('div', { className: 'Test' });
-    }
-  }]);
-
-  return Test;
-}(_react.Component);
-
-exports.default = Test;
+exports.default = main;
 
 /***/ }),
 /* 58 */
