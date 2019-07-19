@@ -65,5 +65,5 @@
     "webpack-shell-plugin": "^0.5.0",
     "ws": "^7.1.0",
     "xmlhttprequest": "^1.8.0"
-  },
+  }
 }
