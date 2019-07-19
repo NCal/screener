@@ -7,8 +7,22 @@ const fullPageScreenshot = require('puppeteer-full-page-screenshot')
 const fs = require('fs')
 const AWS = require('aws-sdk')
 const hidden = require('../../hidden')
-const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const waitOn = require('wait-on')
+const ProgressBar = require('progress');
+
+let bar = new ProgressBar('📽🤳📸🎥Performing Screenshot [:bar] :percent :etas 📽🤳📸🎥', {
+  complete: '=',
+  incomplete: ' ',
+  width: 20,
+  total: 10
+});
+
+var timer = setInterval(function () {
+  if (bar.complete) {
+    console.log('\ncomplete\n');
+    clearInterval(timer);
+  }
+}, 100);
 
 const s3 = new AWS.S3({
   accessKeyId: hidden.accessKeyId,
@@ -19,26 +33,41 @@ const path = require('path')
 let file = path.join(__dirname, '../public/screenshot.png')
 
 const uploadFile = async function (fileName, photoName) {
-  console.log('uploading file')
-  fs.readFile(fileName, (err, data) => {
-    if (err) throw err
-    const params = {
-      Bucket: 'screensh',
-      Key: `photos/${photoName}.png`,
-      ContentType: 'image/png',
-      ACL: 'public-read-write',
-      Body: data
-    }
-    s3.upload(params, function (s3Err, data) {
-      if (s3Err) throw s3Err
-      console.log(`File uploaded successfully at ${data.Location}`)
+  return new Promise((resolve, reject) => {
+    console.log('uploading file')
+    fs.readFile(fileName, (err, data) => {
+      if (err) throw err
+      const params = {
+        Bucket: 'screensh',
+        Key: `photos/${photoName}.png`,
+        ContentType: 'image/png',
+        ACL: 'public-read-write',
+        Body: data
+      }
+      s3.upload(params, function (s3Err, data) {
+        if (s3Err) { reject(s3Err) }
+        console.log(`File uploaded successfully at ${data.Location}`)
+        resolve(`File uploaded successfully at ${data.Location}`)
+      })
     })
   })
 }
 
+// var promise = new Promise(function (resolve, reject) {
+//   // do a thing, possibly async, then…
+
+//   if (/* everything turned out fine */) {
+//     resolve("Stuff worked!");
+//   }
+//   else {
+//     reject(Error("It broke"));
+//   }
+// });
+
 // uploadFile(file);
 
 let screenshot = async function (url) {
+  bar.tick()
   let browser = await puppeteer.launch({
     headless: true,
     ignoreHTTPSErrors: true,
@@ -53,17 +82,20 @@ let screenshot = async function (url) {
   await page.goto(url)
 
   // await page.screenshot({ path: `screenshot.png` })
-  await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')}, () => {
-    console.log('screenshot over')
-  })
+  await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
   console.log('after screenshot')
+  bar.tick()
   await browser.close()
 }
 
 let deleteFile = async function () {
-  fs.unlink(path.join(__dirname, '../public/screenshot.png'), (err) => {
-    if (err) throw err
-    console.log('screenshot was deleted')
+  return new Promise((resolve, reject) => {
+    fs.unlink(path.join(__dirname, '../public/screenshot.png'), (err) => {
+      if (err) reject(err)
+      console.log('screenshot was deleted');
+      bar.tick(2)
+      resolve('screenshot was deleted')
+    })
   })
 }
 
@@ -76,6 +108,7 @@ let checkExistsWithTimeout = async function (filePath, timeout) {
 
     fs.access(filePath, fs.constants.R_OK, function (err) {
       if (!err) {
+        bar.tick(2)
         clearTimeout(timer)
         watcher.close()
         resolve()
@@ -86,6 +119,7 @@ let checkExistsWithTimeout = async function (filePath, timeout) {
     let basename = path.basename(filePath)
     let watcher = fs.watch(dir, function (eventType, filename) {
       if (eventType === 'rename' && filename === basename) {
+        console.log('eventType', eventType, 'filename', filename)
         clearTimeout(timer)
         watcher.close()
         resolve()
@@ -95,28 +129,30 @@ let checkExistsWithTimeout = async function (filePath, timeout) {
 }
 
 let queryBucket = async function (photoName, callback) {
-  let opts = {
-    resources: [
-      `https://screensh.s3.amazonaws.com/photos/${photoName}.png`
-    ],
-    delay: 1000, // initial delay in ms, default 0
-    interval: 100, // poll interval in ms, default 250ms
-    timeout: 100000, // timeout in ms, default Infinity
-    tcpTimeout: 1000, // tcp timeout in ms, default 300ms
-    window: 1000 // stabilization time in ms, default 750ms
-  }
+  return new Promise((resolve, reject) => {
+    let opts = {
+      resources: [
+        `https://screensh.s3.amazonaws.com/photos/${photoName}.png`
+      ],
+      delay: 1000, // initial delay in ms, default 0
+      interval: 100, // poll interval in ms, default 250ms
+      timeout: 100000, // timeout in ms, default Infinity
+      tcpTimeout: 1000, // tcp timeout in ms, default 300ms
+      window: 1000 // stabilization time in ms, default 750ms
+    }
 
-  // Usage with promises
-  waitOn(opts)
-    .then(function () {
-    // once here, all resources are available
-      console.log('link should be working now, safe to delete file')
-      deleteFile()
-      return true
-    })
-    .catch(function (err) {
-      console.log('err', err)
-    })
+    // Usage with promises
+    waitOn(opts)
+      .then(function () {
+        // once here, all resources are available
+        bar.tick(2)
+        console.log('link should be working now, safe to delete file')
+        resolve('link should be working now, safe to delete file')
+      })
+      .catch(function (err) {
+        reject(err);
+      })
+  })
 }
 
 router.post('/screenshot', async (req, res, next) => {
@@ -124,11 +160,15 @@ router.post('/screenshot', async (req, res, next) => {
 
   await screenshot(req.body.url)
   await checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.png'), 10000)
-  await uploadFile(file, photoName)
-  if (queryBucket(photoName)) {
-    console.log('query returned true')
-    res.json({ success: true, photoName: photoName })
-  }
+  await uploadFile(file, photoName).then(() => {
+    queryBucket(photoName).then(() => {
+      deleteFile().then(() => {
+        console.log('sending success response')
+        bar.tick(2)
+        res.json({ success: true, photoName: photoName })
+      })
+    })
+  })
 })
 
 module.exports = router
