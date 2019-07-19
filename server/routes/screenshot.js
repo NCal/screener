@@ -83,7 +83,11 @@ let screenshot = async function (url) {
   await page.setViewport({ width: 1920, height: 1080 })
   await page.goto(url)
 
-  await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: false, type: 'jpeg', quality: 75 })
+  await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
+    console.log('✅image', image)
+  }).catch((err) => {
+    throw new Error(err);
+  })
   // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
   console.log('after screenshot')
   bar.tick()
@@ -170,6 +174,9 @@ router.post('/screenshot', async (req, res, next) => {
         res.json({ success: true, photoName: photoName })
       })
     })
+  }).catch((err) => {
+    console.log('shit')
+    next(err)
   })
 })
 

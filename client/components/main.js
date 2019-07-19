@@ -99,7 +99,7 @@ class main extends React.Component {
   render = () => {
     return (
       <div className="App">
-      <p>Enter a Page to Screenshot</p>
+      <p>Enter a Page to Screenshot 🤳</p>
         <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
