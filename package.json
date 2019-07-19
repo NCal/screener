@@ -56,10 +56,13 @@
     "tls": "^0.0.1",
     "uniqid": "^4.1.1",
     "url-parse": "^1.2.0",
+    "wait-on": "^3.3.0",
+    "wait-until": "0.0.2",
     "webpack": "^2.7.0",
     "webpack-dev-server": "^2.11.1",
     "webpack-shell-plugin": "^0.5.0",
-    "ws": "^7.1.0"
+    "ws": "^7.1.0",
+    "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {}
 }

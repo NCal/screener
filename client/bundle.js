@@ -5116,13 +5116,11 @@ var Main = function (_React$Component) {
 
         if (res.data.success) {
           console.log('success screenshot', res.data.photoName);
-          _this.setState({
-            loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.png' }, function () {
-            setTimeout(function () {
-              _this.setState({ date: Date.now(), disabled: false });
-            }, 200);
-            // screenshotLink.click(); 
-          });
+          setTimeout(function () {
+            _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.png', disabled: false });
+          }, 3000);
+          // screenshotLink.click(); 
+
           // axios
           //   .get(`/download`, { 
           //     params: {
@@ -5157,7 +5155,7 @@ var Main = function (_React$Component) {
         ),
         _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'text', value: _this.state.input, onChange: _this.handleInput, onKeyDown: _this.handleKeyDown }),
         _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'button', value: 'screenshot', onClick: _this.fixProtocol }),
-        _this.state.loading ? _react2.default.createElement('img', { style: { display: 'block', filter: 'invert(1)', margin: '0 auto' }, src: 'http://aquar.io/images/loading.gif?2cab32044cb72a7a' }) : null,
+        _this.state.loading ? _react2.default.createElement('img', { style: { display: 'block', filter: 'invert(1)', margin: '0 auto', height: '100px' }, src: 'http://aquar.io/images/loading.gif?2cab32044cb72a7a' }) : null,
         _this.state.photoName ? _react2.default.createElement(
           'a',
           { href: '' + _this.state.photoName },

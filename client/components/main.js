@@ -68,14 +68,11 @@ class Main extends React.Component {
 
         if (res.data.success){
           console.log('success screenshot', res.data.photoName);
-          this.setState({
-            loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.png` }, () => {
-            setTimeout( () => {
-              this.setState({date: Date.now(), disabled: false})
-
-            }, 200);
+          setTimeout(() => {
+            this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.png`, disabled: false }); 
+          }, 3000);
             // screenshotLink.click(); 
-          });
+         
           // axios
           //   .get(`/download`, { 
           //     params: {
@@ -107,7 +104,7 @@ class Main extends React.Component {
         <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
-        {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
+        {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto', height: '100px' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
 
         
         {this.state.photoName ? <a href={`${this.state.photoName}`}><img src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}

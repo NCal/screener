@@ -7,6 +7,8 @@ const fullPageScreenshot = require('puppeteer-full-page-screenshot')
 const fs = require('fs')
 const AWS = require('aws-sdk')
 const hidden = require('../../hidden')
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
+const waitOn = require('wait-on')
 
 const s3 = new AWS.S3({
   accessKeyId: hidden.accessKeyId,
@@ -67,30 +69,54 @@ let deleteFile = async function () {
 
 let checkExistsWithTimeout = async function (filePath, timeout) {
   return new Promise(function (resolve, reject) {
-
     let timer = setTimeout(function () {
-      watcher.close();
-      reject(new Error('File did not exists and was not created during the timeout.'));
-    }, timeout);
+      watcher.close()
+      reject(new Error('File did not exists and was not created during the timeout.'))
+    }, timeout)
 
     fs.access(filePath, fs.constants.R_OK, function (err) {
       if (!err) {
-        clearTimeout(timer);
-        watcher.close();
-        resolve();
+        clearTimeout(timer)
+        watcher.close()
+        resolve()
       }
-    });
+    })
 
-    let dir = path.dirname(filePath);
-    let basename = path.basename(filePath);
+    let dir = path.dirname(filePath)
+    let basename = path.basename(filePath)
     let watcher = fs.watch(dir, function (eventType, filename) {
       if (eventType === 'rename' && filename === basename) {
-        clearTimeout(timer);
-        watcher.close();
-        resolve();
+        clearTimeout(timer)
+        watcher.close()
+        resolve()
       }
-    });
-  });
+    })
+  })
+}
+
+let queryBucket = async function (photoName, callback) {
+  let opts = {
+    resources: [
+      `https://screensh.s3.amazonaws.com/photos/${photoName}.png`
+    ],
+    delay: 1000, // initial delay in ms, default 0
+    interval: 100, // poll interval in ms, default 250ms
+    timeout: 100000, // timeout in ms, default Infinity
+    tcpTimeout: 1000, // tcp timeout in ms, default 300ms
+    window: 1000 // stabilization time in ms, default 750ms
+  }
+
+  // Usage with promises
+  waitOn(opts)
+    .then(function () {
+    // once here, all resources are available
+      console.log('link should be working now, safe to delete file')
+      deleteFile()
+      return true
+    })
+    .catch(function (err) {
+      console.log('err', err)
+    })
 }
 
 router.post('/screenshot', async (req, res, next) => {
@@ -99,8 +125,10 @@ router.post('/screenshot', async (req, res, next) => {
   await screenshot(req.body.url)
   await checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.png'), 10000)
   await uploadFile(file, photoName)
-  await deleteFile()
-  await res.json({ success: true, photoName: photoName })
+  if (queryBucket(photoName)) {
+    console.log('query returned true')
+    res.json({ success: true, photoName: photoName })
+  }
 })
 
 module.exports = router
