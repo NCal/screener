@@ -17,7 +17,7 @@ let bar = new ProgressBar('📽🤳📸🎥Performing Screenshot [:bar] :percent
   total: 10
 });
 
-var timer = setInterval(function () {
+let timer = setInterval(function () {
   if (bar.complete) {
     console.log('\ncomplete\n');
     clearInterval(timer);

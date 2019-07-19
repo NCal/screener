@@ -4045,18 +4045,23 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var App = function (_React$Component) {
   _inherits(App, _React$Component);
 
-  function App(props) {
+  function App() {
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
   }
-
-  // componentWillMount = () => {
-  //   let self = this
-  // }
 
   _createClass(App, [{
     key: 'render',
+
+    // constructor (props) {
+    //   super(props)
+    // }
+
+    // componentWillMount = () => {
+    //   let self = this/
+    // }
+
     value: function render(props) {
       return _react2.default.createElement(
         'div',

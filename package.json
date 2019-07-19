@@ -65,5 +65,7 @@
     "ws": "^7.1.0",
     "xmlhttprequest": "^1.8.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "case-sensitive-paths-webpack-plugin": "^2.2.0"
+  }
 }
