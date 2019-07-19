@@ -15,6 +15,7 @@
   "author": "NB",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.495.0",
     "axios": "^0.17.1",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.1",

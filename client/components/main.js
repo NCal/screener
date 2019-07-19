@@ -9,8 +9,9 @@ class Main extends React.Component {
       browser: null, 
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
-      png: null,
-      loading: false
+      // png: null,
+      loading: false,
+      photoName: null
     };
   }
 
@@ -28,6 +29,7 @@ class Main extends React.Component {
 
   fixProtocol = () => {
     if (this.state.regex.test(this.state.input)) {
+      this.setState({disabled: true})
       // if (/^http?:\/\//i.test(this.state.input)) {
       //   console.log('no protocol')
       //   let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
@@ -65,10 +67,12 @@ class Main extends React.Component {
         console.log('res', res);
 
         if (res.data.success){
-          console.log('success screenshot');
-          this.setState({ loading: false, date: Date.now() }, () => {
-            setTimeout(()=>{
-              window.location.reload();
+          console.log('success screenshot', res.data.photoName);
+          this.setState({
+            loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.png` }, () => {
+            setTimeout( () => {
+              this.setState({date: Date.now(), disabled: false})
+
             }, 200);
             // screenshotLink.click(); 
           });
@@ -100,14 +104,14 @@ class Main extends React.Component {
     return (
       <div className="App">
       <p>Enter a Page to Screenshot</p>
-        <input type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
-        <input type="button" value="screenshot" onClick={this.fixProtocol}></input>
+        <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
+        <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
         {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
 
-        <a style={{visibility: ''}} download={this.state.png} className={'screenshot'} href="/download" target="_blank" title="screenshot">
-          <img src="/static/screenshot.png" alt={this.state.date} png={this.state.png}/>
-        </a>
+        
+        {this.state.photoName ? <a href={`${this.state.photoName}`}><img src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
+
 
       </div>
     );
