@@ -27,6 +27,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "bluebird": "^3.5.0",
     "body-parser": "^1.17.2",
+    "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "css-loader": "^0.28.5",
     "express": "^4.15.2",
     "express-session": "^1.15.6",
@@ -65,7 +66,4 @@
     "ws": "^7.1.0",
     "xmlhttprequest": "^1.8.0"
   },
-  "devDependencies": {
-    "case-sensitive-paths-webpack-plugin": "^2.2.0"
-  }
 }
