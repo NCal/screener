@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Switch, Redirect, IndexRoute } from 'react-router
 import '../styles/style.scss'
 import Layout from '../components/Layout'
 import Test from '../components/Test'
-import Main from '../components/Main'
+import Main from '../components/main'
 import axios from 'axios'
 
 class App extends React.Component {
