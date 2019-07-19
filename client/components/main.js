@@ -9,7 +9,6 @@ class Main extends React.Component {
       browser: null, 
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
-      // png: null,
       loading: false,
       photoName: null
     };
