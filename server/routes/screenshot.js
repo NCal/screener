@@ -69,6 +69,7 @@ const uploadFile = async function (fileName, photoName) {
 let screenshot = async function (url) {
   bar.tick()
   let browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
     headless: true,
     ignoreHTTPSErrors: true,
     slowMo: 250 // slow down by 250ms
