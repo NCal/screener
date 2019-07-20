@@ -46,7 +46,7 @@ app.use(function (err, req, res, next) {
 
 var env = process.env.NODE_ENV || 'dev'
 var port = process.env.PORT || 3000
-var server = app.listen(port, function () {
+app.listen(port, function () {
   console.log('ENVIRON', env)
   console.log('running at localhost:' + port)
 })
