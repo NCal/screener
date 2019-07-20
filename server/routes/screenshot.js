@@ -6,31 +6,37 @@ const puppeteer = require('puppeteer')
 const fullPageScreenshot = require('puppeteer-full-page-screenshot')
 const fs = require('fs')
 const AWS = require('aws-sdk')
-const hidden = require('../../hidden')
+const path = require('path')
+const ENV = require('../../env')
+const LOCALENV = require('../../localEnv')
 const waitOn = require('wait-on')
-const ProgressBar = require('progress');
-
+const ProgressBar = require('progress')
+let file = path.join(__dirname, '../public/screenshot.jpeg')
 let bar = new ProgressBar('📽🤳📸🎥Performing Screenshot [:bar] :percent :etas 📽🤳📸🎥', {
   complete: '=',
   incomplete: ' ',
   width: 20,
   total: 10
-});
-
+})
 let timer = setInterval(function () {
   if (bar.complete) {
-    console.log('\ncomplete\n');
-    clearInterval(timer);
+    console.log('\ncomplete\n')
+    clearInterval(timer)
   }
-}, 100);
+}, 100)
 
-const s3 = new AWS.S3({
-  accessKeyId: hidden.accessKeyId,
-  secretAccessKey: hidden.secretAccessKey
-})
-const path = require('path')
-
-let file = path.join(__dirname, '../public/screenshot.jpeg')
+let s3
+if (process.env.NODE_ENV !== 'production') {
+  s3 = new AWS.S3({
+    accessKeyId: LOCALENV.accessKeyId,
+    secretAccessKey: LOCALENV.secretAccessKey
+  })
+} else {
+  s3 = new AWS.S3({
+    accessKeyId: ENV.accessKeyId,
+    secretAccessKey: ENV.secretAccessKey
+  })
+}
 
 const uploadFile = async function (fileName, photoName) {
   return new Promise((resolve, reject) => {
@@ -46,26 +52,13 @@ const uploadFile = async function (fileName, photoName) {
       }
       s3.upload(params, function (s3Err, data) {
         if (s3Err) { reject(s3Err) }
-        console.log(data);
+        console.log(data)
         console.log(`File uploaded successfully at ${data.Location}`)
         resolve(`File uploaded successfully at ${data.Location}`)
       })
     })
   })
 }
-
-// var promise = new Promise(function (resolve, reject) {
-//   // do a thing, possibly async, then…
-
-//   if (/* everything turned out fine */) {
-//     resolve("Stuff worked!");
-//   }
-//   else {
-//     reject(Error("It broke"));
-//   }
-// });
-
-// uploadFile(file);
 
 let screenshot = async function (url) {
   bar.tick()
@@ -86,7 +79,7 @@ let screenshot = async function (url) {
   await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
     console.log('✅image', image)
   }).catch((err) => {
-    throw new Error(err);
+    throw new Error(err)
   })
   // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
   console.log('after screenshot')
@@ -98,7 +91,7 @@ let deleteFile = async function () {
   return new Promise((resolve, reject) => {
     fs.unlink(path.join(__dirname, '../public/screenshot.jpeg'), (err) => {
       if (err) reject(err)
-      console.log('screenshot was deleted');
+      console.log('screenshot was deleted')
       bar.tick(2)
       resolve('screenshot was deleted')
     })
@@ -156,7 +149,7 @@ let queryBucket = async function (photoName, callback) {
         resolve('link should be working now, safe to delete file')
       })
       .catch(function (err) {
-        reject(err);
+        reject(err)
       })
   })
 }

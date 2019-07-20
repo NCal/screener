@@ -6,10 +6,12 @@
   "main": "index.js",
   "scripts": {
     "start": "npm-run-all --parallel nodebuild watch server",
+    "dev": "npm-run-all --parallel nodebuild watch dev-server",
     "watch": "webpack-dev-server --progress --inline --hot --history-api-fallback",
     "nodebuild": "webpack --watch",
     "configure": "./Data/configuredb.sh",
-    "server": "nodemon \"./server/server.js\" --watch \"./server\""
+    "server": "NODE_ENV=production nodemon \"./server/server.js\" --watch \"./server\"",
+    "dev-server": "nodemon \"./server/server.js\" --watch \"./server\""
   },
   "proxy": "http://localhost:3000/",
   "author": "NB",
