@@ -1,5 +1,4 @@
 const ENV = require('../../env')
-const LOCALENV = require('../../localEnv')
 const AWS = require('aws-sdk')
 const fs = require('fs')
 const path = require('path')
@@ -12,6 +11,7 @@ let file = path.join(__dirname, '../public/screenshot.jpeg')
 let s3
 
 if (process.env.NODE_ENV !== 'production') {
+  const LOCALENV = require('../../localEnv')
   s3 = new AWS.S3({
     accessKeyId: LOCALENV.accessKeyId,
     secretAccessKey: LOCALENV.secretAccessKey
