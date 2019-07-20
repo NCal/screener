@@ -23,11 +23,12 @@ if (process.env.NODE_ENV !== 'production') {
   })
 }
 
-const uploadFile = async function (fileName, photoName) {
+const uploadFile = function (fileName, photoName) {
   return new Promise((resolve, reject) => {
-    console.log('uploading file')
+    console.log('upload file', fileName)
     fs.readFile(fileName, (err, data) => {
-      if (err) throw err
+      console.log('fs.readFILE!!!!')
+      if (err) { console.log('❌error reading upload file !❌'); reject(err) }
       const params = {
         Bucket: 'screensh',
         Key: `photos/${photoName}.jpeg`,
@@ -36,54 +37,60 @@ const uploadFile = async function (fileName, photoName) {
         Body: data
       }
       s3.upload(params, function (s3Err, data) {
-        if (s3Err) { reject(s3Err) }
-        console.log(data)
-        console.log(`File uploaded successfully at ${data.Location}`)
-        resolve(`File uploaded successfully at ${data.Location}`)
+        console.log('⚠️ s3 upload', data.location)
+        if (s3Err) { console.log('❌s3 upload error!❌'); reject(s3Err) } else {
+          console.log(`File uploaded successfully at ${data.Location}`)
+          resolve(`File uploaded successfully at ${data.Location}`)
+        }
       })
     })
   })
 }
 
 let screenshot = async function (url) {
-  pBar.bar.tick()
-  let browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    headless: true,
-    ignoreHTTPSErrors: true,
-    slowMo: 250 // slow down by 250ms
-  })
+  return new Promise(async (resolve, reject) => {
+    pBar.bar.tick()
+    let browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      headless: true,
+      slowMo: 250 // slow down by 250ms
+    })
 
-  const page = await browser.newPage()
-  await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36')
-  await page.setJavaScriptEnabled(true)
-  console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
-  await page.setViewport({ width: 1920, height: 1080 })
-  await page.goto(url)
+    const page = await browser.newPage()
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36')
+    await page.setJavaScriptEnabled(true)
+    console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
+    await page.setViewport({ width: 1920, height: 1080 })
+    await page.goto(url, {waitUntil: 'networkidle2'})
+      .then(() => { console.log('✅success finding url✅') })
+      .catch((err) => { console.log('❌error navigating to page❌'); reject(err) })
 
-  await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
-    console.log('✅image', image)
-  }).catch((err) => {
-    throw new Error(err)
+    await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
+      console.log('✅image', image)
+    }).catch((err) => {
+      console.log('❌error taking screeenshot❌')
+      reject(err)
+    })
+    // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
+    console.log('after screenshot')
+    pBar.bar.tick()
+    await browser.close()
+    resolve()
   })
-  // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
-  console.log('after screenshot')
-  pBar.bar.tick()
-  await browser.close()
 }
 
-let deleteFile = async function () {
+let deleteFile = function () {
   return new Promise((resolve, reject) => {
     fs.unlink(path.join(__dirname, '../public/screenshot.jpeg'), (err) => {
-      if (err) reject(err)
-      console.log('screenshot was deleted')
+      if (err) { console.log('❌we have an error deleting the file❌'); reject(err) }
+      console.log('✅screenshot was deleted')
       pBar.bar.tick(2)
       resolve('screenshot was deleted')
     })
   })
 }
 
-let checkExistsWithTimeout = async function (filePath, timeout) {
+let checkExistsWithTimeout = function (filePath, timeout) {
   return new Promise(function (resolve, reject) {
     let timer = setTimeout(function () {
       watcher.close()
@@ -95,7 +102,11 @@ let checkExistsWithTimeout = async function (filePath, timeout) {
         pBar.bar.tick(2)
         clearTimeout(timer)
         watcher.close()
+        console.log('✅local file found!✅')
         resolve()
+      } else {
+        console.log('❌error accessing local file!❌')
+        reject(err)
       }
     })
 
@@ -112,7 +123,8 @@ let checkExistsWithTimeout = async function (filePath, timeout) {
   })
 }
 
-let queryBucket = async function (photoName, callback) {
+let queryBucket = function (photoName, callback) {
+  console.log('QUERY BUCKET⚠️')
   return new Promise((resolve, reject) => {
     let opts = {
       resources: [
@@ -130,10 +142,11 @@ let queryBucket = async function (photoName, callback) {
       .then(function () {
         // once here, all resources are available
         pBar.bar.tick(2)
-        console.log('link should be working now, safe to delete file')
+        console.log('✅link should be working now, safe to delete file')
         resolve('link should be working now, safe to delete file')
       })
       .catch(function (err) {
+        console.log('❌ ERROR querying bucket')
         reject(err)
       })
   })
@@ -142,19 +155,58 @@ let queryBucket = async function (photoName, callback) {
 router.post('/screenshot', async (req, res, next) => {
   let photoName = `screenshot-${Date.now()}`
 
-  await screenshot(req.body.url)
-  await checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.jpeg'), 10000)
-  await uploadFile(file, photoName).then(() => {
-    queryBucket(photoName).then(() => {
-      deleteFile().then(() => {
-        console.log('sending success response')
-        pBar.bar.tick(2)
-        res.json({ success: true, photoName: photoName })
+  await screenshot(req.body.url).then(() => {
+    console.log('time to check if file exists')
+    checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.jpeg'), 10000)
+      .then(() => {
+        // upload file to s3
+        uploadFile(file, photoName).then(() => {
+          // query bucket
+          queryBucket(photoName).then(() => {
+            // delete local file
+            deleteFile().then(() => {
+              console.log('sending success response')
+              pBar.bar.tick(2)
+              res.json({ success: true, photoName: photoName })
+            }).catch(() => {
+              console.log(' delete file error')
+              res.json({
+                success: false,
+                photoName: null,
+                error: 'delete file error'
+              })
+            })
+          }).catch(() => {
+            console.log('query bucket file error')
+            res.json({
+              success: false,
+              photoName: null,
+              error: 'query bucket file error'
+            })
+          })
+        }).catch(() => {
+          console.log('upload file error')
+          res.json({
+            success: false,
+            photoName: null,
+            error: 'upload file error'
+          })
+        })
+      }).catch(() => {
+        console.log('check exists with timeout error')
+        res.json({
+          success: false,
+          photoName: null,
+          error: 'check exists with timeout error'
+        })
       })
-    })
   }).catch((err) => {
-    console.log('shit')
-    next(err)
+    err = err || '🆘'
+    res.json({
+      success: false,
+      photoName: null,
+      error: err
+    })
   })
 })
 

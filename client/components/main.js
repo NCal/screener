@@ -71,24 +71,11 @@ class main extends React.Component {
             this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false }); 
           }, 3000);
             // screenshotLink.click(); 
-         
-          // axios
-          //   .get(`/download`, { 
-          //     params: {
-          //       searchQuery: this.state.inut
-          //     }
-          // }).then((res)=>{
-          //     console.log('download res image', res.data)
-          //     this.setState({png: res.data},()=>{
-          //       this.setState({ loading: false, date: Date.now() },()=>{
-          //         setTimeout(window.location.reload(), 500);
-          //         // screenshotLink.click(); 
-          //       });
-          //     })
-              
-          //   }).catch((err)=>{
-          //     console.log('errrrror', err)
-          //   })
+        } 
+
+        if (!res.data.success){
+          this.setState({ loading: false, photoName: null, disabled: false }); 
+          console.log('failed getting screenshot from url', this.state.input);
         }
       })
       .catch(function (error) {
