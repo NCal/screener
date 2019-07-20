@@ -1,31 +1,16 @@
-const { Router } = require('express')
-const pool = require('../../Data/index')
-const router = Router()
-const uniqid = require('uniqid')
-const puppeteer = require('puppeteer')
-const fullPageScreenshot = require('puppeteer-full-page-screenshot')
-const fs = require('fs')
-const AWS = require('aws-sdk')
-const path = require('path')
 const ENV = require('../../env')
 const LOCALENV = require('../../localEnv')
+const AWS = require('aws-sdk')
+const fs = require('fs')
+const path = require('path')
+const { Router } = require('express')
+const router = Router()
+const puppeteer = require('puppeteer')
 const waitOn = require('wait-on')
-const ProgressBar = require('progress')
+const pBar = require('../helper/pBar')
 let file = path.join(__dirname, '../public/screenshot.jpeg')
-let bar = new ProgressBar('📽🤳📸🎥Performing Screenshot [:bar] :percent :etas 📽🤳📸🎥', {
-  complete: '=',
-  incomplete: ' ',
-  width: 20,
-  total: 10
-})
-let timer = setInterval(function () {
-  if (bar.complete) {
-    console.log('\ncomplete\n')
-    clearInterval(timer)
-  }
-}, 100)
-
 let s3
+
 if (process.env.NODE_ENV !== 'production') {
   s3 = new AWS.S3({
     accessKeyId: LOCALENV.accessKeyId,
@@ -61,7 +46,7 @@ const uploadFile = async function (fileName, photoName) {
 }
 
 let screenshot = async function (url) {
-  bar.tick()
+  pBar.bar.tick()
   let browser = await puppeteer.launch({
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     headless: true,
@@ -83,7 +68,7 @@ let screenshot = async function (url) {
   })
   // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
   console.log('after screenshot')
-  bar.tick()
+  pBar.bar.tick()
   await browser.close()
 }
 
@@ -92,7 +77,7 @@ let deleteFile = async function () {
     fs.unlink(path.join(__dirname, '../public/screenshot.jpeg'), (err) => {
       if (err) reject(err)
       console.log('screenshot was deleted')
-      bar.tick(2)
+      pBar.bar.tick(2)
       resolve('screenshot was deleted')
     })
   })
@@ -107,7 +92,7 @@ let checkExistsWithTimeout = async function (filePath, timeout) {
 
     fs.access(filePath, fs.constants.R_OK, function (err) {
       if (!err) {
-        bar.tick(2)
+        pBar.bar.tick(2)
         clearTimeout(timer)
         watcher.close()
         resolve()
@@ -144,7 +129,7 @@ let queryBucket = async function (photoName, callback) {
     waitOn(opts)
       .then(function () {
         // once here, all resources are available
-        bar.tick(2)
+        pBar.bar.tick(2)
         console.log('link should be working now, safe to delete file')
         resolve('link should be working now, safe to delete file')
       })
@@ -163,7 +148,7 @@ router.post('/screenshot', async (req, res, next) => {
     queryBucket(photoName).then(() => {
       deleteFile().then(() => {
         console.log('sending success response')
-        bar.tick(2)
+        pBar.bar.tick(2)
         res.json({ success: true, photoName: photoName })
       })
     })
