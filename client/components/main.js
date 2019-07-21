@@ -66,6 +66,7 @@ class main extends React.Component {
     console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
     this.setState({ loading: true, photoName: null });
+    let self = this;
     axios
       .post('/screenshot', { url: this.state.input })
       .then(res => {
@@ -90,7 +91,7 @@ class main extends React.Component {
       })
       .catch(function (error) {
         console.log('we hassss an error', error);
-        this.setState({limitError: 'Failed getting screenshot from url.. 🆘'})
+        this.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' }); 
       });
   }
 
