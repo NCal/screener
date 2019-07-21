@@ -33,7 +33,6 @@ app.get('*', (req, res) => {
 // ROUTES //
 app.use('/', indexRoutes)
 
-
 // ERROR HANDLER //
 app.use(function (err, req, res, next) {
   console.log(err.stack)
