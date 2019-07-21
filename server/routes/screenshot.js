@@ -9,14 +9,16 @@ const waitOn = require('wait-on')
 const pBar = require('../helper/pBar')
 const uniqid = require('uniqid')
 let s3
-
+let envVar
 if (process.env.NODE_ENV !== 'production') {
+  envVar = 'dev'
   const LOCALENV = require('../../localEnv')
   s3 = new AWS.S3({
     accessKeyId: LOCALENV.accessKeyId,
     secretAccessKey: LOCALENV.secretAccessKey
   })
 } else {
+  envVar = 'production'
   s3 = new AWS.S3({
     accessKeyId: ENV.accessKeyId,
     secretAccessKey: ENV.secretAccessKey
@@ -49,26 +51,27 @@ const uploadFile = function (fileName, photoName) {
 
 let screenshot = async function (url, photoName) {
   return new Promise(async (resolve, reject) => {
+    console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
     pBar.bar.tick()
     let browser = await puppeteer.launch({
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       headless: true,
       slowMo: 250 // slow down by 250ms
     })
+    let fileURL = `../public/${photoName}.jpeg`
 
     const page = await browser.newPage()
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36')
     await page.setJavaScriptEnabled(true)
-    console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
     await page.setViewport({ width: 1920, height: 1080 })
     await page.goto(url, {waitUntil: 'networkidle2'})
       .then(() => { console.log('✅success finding url✅') })
       .catch((err) => { console.log('❌error navigating to page❌'); reject(err) })
 
-    await page.screenshot({ path: path.join(__dirname, `../public/${photoName}.jpeg`), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
+    await page.screenshot({ path: path.join(__dirname, fileURL), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
       console.log('✅image', image)
     }).catch((err) => {
-      console.log('❌error taking screeenshot❌')
+      console.log('❌error taking screeenshot❌', err)
       reject(err)
     })
     // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
