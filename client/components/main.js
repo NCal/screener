@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'
 
 class main extends React.Component {
   constructor (props){
@@ -11,7 +12,8 @@ class main extends React.Component {
       ready: false,
       loading: false,
       photoName: null,
-      limitError: null
+      limitError: null,
+      opacity: 1
     };
   }
 
@@ -30,20 +32,15 @@ class main extends React.Component {
   fixProtocol = () => {
     if (this.state.regex.test(this.state.input)) {
       this.setState({disabled: true})
-      // if (/^http?:\/\//i.test(this.state.input)) {
-      //   console.log('no protocol')
-      //   let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
-      //   this.setState({ input: `https://${noProtocol}` });
-      // }
 
       if (!/^https?:\/\//i.test(this.state.input)) {
         console.log('didnt find a protocol');
         this.setState({ input: `http://${this.state.input}` });
       }
-    
-    this.setState({ ready: true }, ()=>{
-      this.screenshot();
-    });
+      
+      this.setState({ ready: true }, ()=>{
+        this.screenshot();
+      });
     }
   }
 
@@ -56,11 +53,19 @@ class main extends React.Component {
       })
   }
 
+  onHover = () => {
+    this.setState({opacity: 0.7})
+  }
+
+  onMouseLeave = () => {
+    this.setState({opacity: 1})
+  }
+
   screenshot = () => {
     console.log('screenshot');
     console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
-    this.setState({ loading: true });
+    this.setState({ loading: true, photoName: null });
     axios
       .post('/screenshot', { url: this.state.input })
       .then(res => {
@@ -71,12 +76,11 @@ class main extends React.Component {
           setTimeout(() => {
             this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false, error: null }); 
           }, 3000);
-            // screenshotLink.click(); 
         } 
 
         if (!res.data.success){
-          this.setState({ loading: false, photoName: null, disabled: false }); 
-          console.log('failed getting screenshot from url', this.state.input);
+          this.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' }); 
+          console.log('Failed getting screenshot from url.. 🆘', this.state.input);
         }
 
         if (res.data.limitError){
@@ -86,12 +90,14 @@ class main extends React.Component {
       })
       .catch(function (error) {
         console.log('we hassss an error', error);
+        this.setState({limitError: 'Failed getting screenshot from url.. 🆘'})
       });
   }
 
   render = () => {
     return (
       <div className="App">
+      <Link to={'About'}><span style={{position: 'absolute', top: '10px', left: '10px'}}>About</span></Link>
       <p>Enter a Page to Screenshot 🤳</p>
         <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
@@ -99,8 +105,8 @@ class main extends React.Component {
         {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto', height: '100px' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
 
         
-        {this.state.photoName ? <a href={`${this.state.photoName}`}><img src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
-        {this.state.limitError !== null ? <p>{this.state.limitError}</p> : null}
+        {this.state.photoName ? <a  href={`${this.state.photoName}`} target="_blank"><p style={{marginTop: '15px', marginBottom: '0px'}}>✅ Success! ✅</p><img style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: `${this.state.opacity}`}} onMouseLeave={this.onMouseLeave} onMouseOver={this.onHover} src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
+        {this.state.limitError !== null ? <p style={{marginTop: '15px'}}>{this.state.limitError}</p> : null}
 
 
       </div>

@@ -4,16 +4,8 @@ import '../styles/style.scss'
 import Layout from '../components/Layout'
 import Main from '../components/main'
 import Four0Four from '../components/Four0Four'
-
+import About from '../components/About'
 class App extends React.Component {
-  // constructor (props) {
-  //   super(props)
-  // }
-
-  // componentWillMount = () => {
-  //   let self = this/
-  // }
-
   render (props) {
     return <div className="container">
       <BrowserRouter>
@@ -21,6 +13,7 @@ class App extends React.Component {
           <div className="content-container">
             <Switch>
               <Route path="/" exact render={({ props, history }) => <Main {...props} history={history} />} />
+              <Route path="/about" exact render={({ props, history }) => <About {...props} history={history} />} />
               <Route component={Four0Four} />
             </Switch>
           </div>

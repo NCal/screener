@@ -2604,6 +2604,10 @@ var _Four0Four = __webpack_require__(59);
 
 var _Four0Four2 = _interopRequireDefault(_Four0Four);
 
+var _About = __webpack_require__(107);
+
+var _About2 = _interopRequireDefault(_About);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2623,15 +2627,6 @@ var App = function (_React$Component) {
 
   _createClass(App, [{
     key: 'render',
-
-    // constructor (props) {
-    //   super(props)
-    // }
-
-    // componentWillMount = () => {
-    //   let self = this/
-    // }
-
     value: function render(props) {
       return _react2.default.createElement(
         'div',
@@ -2652,6 +2647,11 @@ var App = function (_React$Component) {
                     var props = _ref.props,
                         history = _ref.history;
                     return _react2.default.createElement(_main2.default, _extends({}, props, { history: history }));
+                  } }),
+                _react2.default.createElement(_reactRouterDom.Route, { path: '/about', exact: true, render: function render(_ref2) {
+                    var props = _ref2.props,
+                        history = _ref2.history;
+                    return _react2.default.createElement(_About2.default, _extends({}, props, { history: history }));
                   } }),
                 _react2.default.createElement(_reactRouterDom.Route, { component: _Four0Four2.default })
               )
@@ -3737,6 +3737,8 @@ var _axios = __webpack_require__(23);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _reactRouterDom = __webpack_require__(37);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3766,11 +3768,6 @@ var main = function (_React$Component) {
     _this.fixProtocol = function () {
       if (_this.state.regex.test(_this.state.input)) {
         _this.setState({ disabled: true });
-        // if (/^http?:\/\//i.test(this.state.input)) {
-        //   console.log('no protocol')
-        //   let noProtocol = this.state.input.split('').splice(7, this.state.input.length).join('')
-        //   this.setState({ input: `https://${noProtocol}` });
-        // }
 
         if (!/^https?:\/\//i.test(_this.state.input)) {
           console.log('didnt find a protocol');
@@ -3791,11 +3788,19 @@ var main = function (_React$Component) {
       });
     };
 
+    _this.onHover = function () {
+      _this.setState({ opacity: 0.7 });
+    };
+
+    _this.onMouseLeave = function () {
+      _this.setState({ opacity: 1 });
+    };
+
     _this.screenshot = function () {
       console.log('screenshot');
       console.log('make a call to backend');
       var screenshotLink = document.getElementsByClassName('screenshot')[0];
-      _this.setState({ loading: true });
+      _this.setState({ loading: true, photoName: null });
       _axios2.default.post('/screenshot', { url: _this.state.input }).then(function (res) {
         console.log('res', res);
 
@@ -3804,12 +3809,11 @@ var main = function (_React$Component) {
           setTimeout(function () {
             _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.jpeg', disabled: false, error: null });
           }, 3000);
-          // screenshotLink.click(); 
         }
 
         if (!res.data.success) {
-          _this.setState({ loading: false, photoName: null, disabled: false });
-          console.log('failed getting screenshot from url', _this.state.input);
+          _this.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' });
+          console.log('Failed getting screenshot from url.. 🆘', _this.state.input);
         }
 
         if (res.data.limitError) {
@@ -3818,6 +3822,7 @@ var main = function (_React$Component) {
         }
       }).catch(function (error) {
         console.log('we hassss an error', error);
+        this.setState({ limitError: 'Failed getting screenshot from url.. 🆘' });
       });
     };
 
@@ -3825,6 +3830,15 @@ var main = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         { className: 'App' },
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: 'About' },
+          _react2.default.createElement(
+            'span',
+            { style: { position: 'absolute', top: '10px', left: '10px' } },
+            'About'
+          )
+        ),
         _react2.default.createElement(
           'p',
           null,
@@ -3835,12 +3849,17 @@ var main = function (_React$Component) {
         _this.state.loading ? _react2.default.createElement('img', { style: { display: 'block', filter: 'invert(1)', margin: '0 auto', height: '100px' }, src: 'http://aquar.io/images/loading.gif?2cab32044cb72a7a' }) : null,
         _this.state.photoName ? _react2.default.createElement(
           'a',
-          { href: '' + _this.state.photoName },
-          _react2.default.createElement('img', { src: _this.state.photoName + '?' + Date.now(), alt: _this.state.date })
+          { href: '' + _this.state.photoName, target: '_blank' },
+          _react2.default.createElement(
+            'p',
+            { style: { marginTop: '15px', marginBottom: '0px' } },
+            '\u2705 Success! \u2705'
+          ),
+          _react2.default.createElement('img', { style: { position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: '' + _this.state.opacity }, onMouseLeave: _this.onMouseLeave, onMouseOver: _this.onHover, src: _this.state.photoName + '?' + Date.now(), alt: _this.state.date })
         ) : null,
         _this.state.limitError !== null ? _react2.default.createElement(
           'p',
-          null,
+          { style: { marginTop: '15px' } },
           _this.state.limitError
         ) : null
       );
@@ -3853,7 +3872,8 @@ var main = function (_React$Component) {
       ready: false,
       loading: false,
       photoName: null,
-      limitError: null
+      limitError: null,
+      opacity: 1
     };
     return _this;
   }
@@ -25665,6 +25685,85 @@ module.exports = function (css) {
 	return fixedCss;
 };
 
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(23);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _reactRouterDom = __webpack_require__(37);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var About = function (_React$Component) {
+  _inherits(About, _React$Component);
+
+  function About(props) {
+    _classCallCheck(this, About);
+
+    var _this = _possibleConstructorReturn(this, (About.__proto__ || Object.getPrototypeOf(About)).call(this, props));
+
+    _this.render = function () {
+      return _react2.default.createElement(
+        'div',
+        { className: 'App' },
+        _react2.default.createElement(
+          _reactRouterDom.Link,
+          { to: '/' },
+          _react2.default.createElement(
+            'span',
+            { style: { position: 'absolute', top: '10px', left: '10px' } },
+            'Home'
+          )
+        ),
+        _react2.default.createElement(
+          'h3',
+          null,
+          'About'
+        ),
+        _react2.default.createElement(
+          'p',
+          null,
+          'Simply enter a Url to take a screenshot'
+        )
+      );
+    };
+
+    _this.state = {};
+    return _this;
+  }
+
+  _createClass(About, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {}
+  }]);
+
+  return About;
+}(_react2.default.Component);
+
+exports.default = About;
 
 /***/ })
 /******/ ]);

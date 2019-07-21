@@ -211,7 +211,7 @@ router.post('/screenshot', async (req, res, next) => {
     res.json({
       success: false,
       photoName: null,
-      error: err
+      error: 'screenshot error'
     })
   })
 })
