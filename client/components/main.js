@@ -98,7 +98,7 @@ class main extends React.Component {
   render = () => {
     return (
       <div className="App">
-      <Link to={'About'}><span style={{position: 'absolute', top: '10px', left: '10px'}}>About</span></Link>
+      <Link to={'About'} ><span style={{position: 'absolute', top: '10px', left: '10px', display: `${this.state.loading ? 'none' : 'block'}`}}>About</span></Link>
       <p>Enter a Page to Screenshot 🤳</p>
         <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
