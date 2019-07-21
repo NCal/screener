@@ -65,7 +65,7 @@ class main extends React.Component {
     console.log('screenshot');
     console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
-    this.setState({ loading: true, photoName: null });
+    this.setState({ loading: true, photoName: null, limitError: null });
     let self = this;
     axios
       .post('/screenshot', { url: this.state.input })
