@@ -91,7 +91,7 @@ class main extends React.Component {
       })
       .catch(function (error) {
         console.log('we hassss an error', error);
-        this.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' }); 
+        self.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' }); 
       });
   }
 
