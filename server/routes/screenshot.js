@@ -49,7 +49,7 @@ const uploadFile = function (fileName, photoName) {
   })
 }
 
-let screenshot = async function (url, photoName) {
+let screenshot = async function (url, photoName, fileURL) {
   return new Promise(async (resolve, reject) => {
     console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
     pBar.bar.tick()
@@ -58,7 +58,6 @@ let screenshot = async function (url, photoName) {
       headless: true,
       slowMo: 250 // slow down by 250ms
     })
-    let fileURL = `../public/${photoName}.jpeg`
 
     const page = await browser.newPage()
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36')
@@ -68,7 +67,7 @@ let screenshot = async function (url, photoName) {
       .then(() => { console.log('✅success finding url✅') })
       .catch((err) => { console.log('❌error navigating to page❌'); reject(err) })
 
-    await page.screenshot({ path: path.join(__dirname, fileURL), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
+    await page.screenshot({ path: fileURL, fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
       console.log('✅image', image)
     }).catch((err) => {
       console.log('❌error taking screeenshot❌', err)
@@ -162,7 +161,7 @@ router.post('/screenshot', async (req, res, next) => {
   let photoName = uniqid('screenshot-')
   let fileName = path.join(__dirname, `../public/${photoName}.jpeg`)
 
-  await screenshot(req.body.url, photoName).then(() => {
+  await screenshot(req.body.url, photoName, fileName).then(() => {
     console.log('time to check if file exists')
     checkExistsWithTimeout(fileName, 10000)
       .then(() => {
