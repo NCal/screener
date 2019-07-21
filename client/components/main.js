@@ -10,7 +10,8 @@ class main extends React.Component {
       regex: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/,
       ready: false,
       loading: false,
-      photoName: null
+      photoName: null,
+      limitError: null
     };
   }
 
@@ -68,7 +69,7 @@ class main extends React.Component {
         if (res.data.success){
           console.log('success screenshot', res.data.photoName);
           setTimeout(() => {
-            this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false }); 
+            this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false, error: null }); 
           }, 3000);
             // screenshotLink.click(); 
         } 
@@ -77,9 +78,14 @@ class main extends React.Component {
           this.setState({ loading: false, photoName: null, disabled: false }); 
           console.log('failed getting screenshot from url', this.state.input);
         }
+
+        if (res.data.limitError){
+          console.log('res.data.error', res.data.limitError)
+          this.setState({limitError: res.data.limitError})
+        }
       })
       .catch(function (error) {
-        console.log(error);
+        console.log('we hassss an error', error);
       });
   }
 
@@ -94,6 +100,7 @@ class main extends React.Component {
 
         
         {this.state.photoName ? <a href={`${this.state.photoName}`}><img src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
+        {this.state.limitError !== null ? <p>{this.state.limitError}</p> : null}
 
 
       </div>

@@ -7,7 +7,7 @@ const router = Router()
 const puppeteer = require('puppeteer')
 const waitOn = require('wait-on')
 const pBar = require('../helper/pBar')
-let file = path.join(__dirname, '../public/screenshot.jpeg')
+const uniqid = require('uniqid')
 let s3
 
 if (process.env.NODE_ENV !== 'production') {
@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const uploadFile = function (fileName, photoName) {
   return new Promise((resolve, reject) => {
-    console.log('upload file', fileName)
+    console.log(fileName, photoName)
     fs.readFile(fileName, (err, data) => {
       console.log('fs.readFILE!!!!')
       if (err) { console.log('❌error reading upload file !❌'); reject(err) }
@@ -37,7 +37,7 @@ const uploadFile = function (fileName, photoName) {
         Body: data
       }
       s3.upload(params, function (s3Err, data) {
-        console.log('⚠️ s3 upload', data.location)
+        console.log('⚠️ s3 upload', data)
         if (s3Err) { console.log('❌s3 upload error!❌'); reject(s3Err) } else {
           console.log(`File uploaded successfully at ${data.Location}`)
           resolve(`File uploaded successfully at ${data.Location}`)
@@ -47,7 +47,7 @@ const uploadFile = function (fileName, photoName) {
   })
 }
 
-let screenshot = async function (url) {
+let screenshot = async function (url, photoName) {
   return new Promise(async (resolve, reject) => {
     pBar.bar.tick()
     let browser = await puppeteer.launch({
@@ -65,7 +65,7 @@ let screenshot = async function (url) {
       .then(() => { console.log('✅success finding url✅') })
       .catch((err) => { console.log('❌error navigating to page❌'); reject(err) })
 
-    await page.screenshot({ path: path.join(__dirname, '../public/screenshot.jpeg'), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
+    await page.screenshot({ path: path.join(__dirname, `../public/${photoName}.jpeg`), fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
       console.log('✅image', image)
     }).catch((err) => {
       console.log('❌error taking screeenshot❌')
@@ -75,13 +75,14 @@ let screenshot = async function (url) {
     console.log('after screenshot')
     pBar.bar.tick()
     await browser.close()
-    resolve()
+    resolve(photoName)
   })
 }
 
-let deleteFile = function () {
+let deleteFile = function (fileName) {
+  console.log('delete file path', fileName)
   return new Promise((resolve, reject) => {
-    fs.unlink(path.join(__dirname, '../public/screenshot.jpeg'), (err) => {
+    fs.unlink(fileName, (err) => {
       if (err) { console.log('❌we have an error deleting the file❌'); reject(err) }
       console.log('✅screenshot was deleted')
       pBar.bar.tick(2)
@@ -143,7 +144,7 @@ let queryBucket = function (photoName, callback) {
         // once here, all resources are available
         pBar.bar.tick(2)
         console.log('✅link should be working now, safe to delete file')
-        resolve('link should be working now, safe to delete file')
+        resolve(photoName)
       })
       .catch(function (err) {
         console.log('❌ ERROR querying bucket')
@@ -153,18 +154,21 @@ let queryBucket = function (photoName, callback) {
 }
 
 router.post('/screenshot', async (req, res, next) => {
-  let photoName = `screenshot-${Date.now()}`
+  // console.log('❇️req❇️', req);
+  // console.log('⚠️res⚠️', res);
+  let photoName = uniqid('screenshot-')
+  let fileName = path.join(__dirname, `../public/${photoName}.jpeg`)
 
-  await screenshot(req.body.url).then(() => {
+  await screenshot(req.body.url, photoName).then(() => {
     console.log('time to check if file exists')
-    checkExistsWithTimeout(path.join(__dirname, '../public/screenshot.jpeg'), 10000)
+    checkExistsWithTimeout(fileName, 10000)
       .then(() => {
         // upload file to s3
-        uploadFile(file, photoName).then(() => {
+        uploadFile(fileName, photoName).then(() => {
           // query bucket
           queryBucket(photoName).then(() => {
             // delete local file
-            deleteFile().then(() => {
+            deleteFile(fileName).then(() => {
               console.log('sending success response')
               pBar.bar.tick(2)
               res.json({ success: true, photoName: photoName })
