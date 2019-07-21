@@ -159,7 +159,7 @@ router.post('/screenshot', async (req, res, next) => {
   // console.log('❇️req❇️', req);
   // console.log('⚠️res⚠️', res);
   let photoName = uniqid('screenshot-')
-  let fileName = path.join(__dirname, `../public/${photoName}.jpeg`)
+  let fileName = path.join(process.env.PWD, `../public/${photoName}.jpeg`)
 
   await screenshot(req.body.url, photoName, fileName).then(() => {
     console.log('time to check if file exists')
