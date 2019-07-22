@@ -25,19 +25,31 @@ if (process.env.NODE_ENV !== 'production') {
   })
 }
 
-const uploadFile = function (fileName, photoName) {
+const uploadFile = function (fileName, photoName, fileOption) {
   return new Promise((resolve, reject) => {
     console.log(fileName, photoName)
     fs.readFile(fileName, (err, data) => {
       console.log('fs.readFILE!!!!')
       if (err) { console.log('❌error reading upload file !❌'); reject(err) }
-      const params = {
-        Bucket: 'screensh',
-        Key: `photos/${photoName}.jpeg`,
-        ContentType: 'image/jpeg',
-        ACL: 'public-read-write',
-        Body: data
+      let params
+      if (fileOption !== 'jpeg') {
+        params = {
+          Bucket: 'screensh',
+          Key: `photos/${photoName}.pdf`,
+          ContentType: 'image/jpeg',
+          ACL: 'public-read-write',
+          Body: data
+        }
+      } else {
+        params = {
+          Bucket: 'screensh',
+          Key: `photos/${photoName}.jpeg`,
+          ContentType: 'image/jpeg',
+          ACL: 'public-read-write',
+          Body: data
+        }
       }
+
       s3.upload(params, function (s3Err, data) {
         console.log('⚠️ s3 upload', data)
         if (s3Err) { console.log('❌s3 upload error!❌'); reject(s3Err) } else {
@@ -49,7 +61,7 @@ const uploadFile = function (fileName, photoName) {
   })
 }
 
-let screenshot = async function (url, photoName, fileURL) {
+let screenshot = async function (url, photoName, fileURL, fullPage, fileOption) {
   return new Promise(async (resolve, reject) => {
     console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
     pBar.bar.tick()
@@ -66,13 +78,24 @@ let screenshot = async function (url, photoName, fileURL) {
     await page.goto(url, {waitUntil: 'networkidle2'})
       .then(() => { console.log('✅success finding url✅') })
       .catch((err) => { console.log('❌error navigating to page❌'); reject(err) })
+    if (fileOption !== 'jpeg') {
+      // PDF
+      await page.pdf({ path: fileURL }).then((image) => {
+        console.log('PDF', image)
+      }).catch((err) => {
+        console.log('❌error taking PDF❌', err)
+        reject(err)
+      })
+    } else {
+      // JPEG
+      await page.screenshot({ path: fileURL, fullPage: fullPage, type: fileOption, quality: 75 }).then((image) => {
+        console.log('✅image', image)
+      }).catch((err) => {
+        console.log('❌error taking screeenshot❌', err)
+        reject(err)
+      })
+    }
 
-    await page.screenshot({ path: fileURL, fullPage: true, type: 'jpeg', quality: 75 }).then((image) => {
-      console.log('✅image', image)
-    }).catch((err) => {
-      console.log('❌error taking screeenshot❌', err)
-      reject(err)
-    })
     // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
     console.log('after screenshot')
     pBar.bar.tick()
@@ -81,7 +104,7 @@ let screenshot = async function (url, photoName, fileURL) {
   })
 }
 
-let deleteFile = function (fileName) {
+let deleteFile = function (fileName, fileOption) {
   console.log('delete file path', fileName)
   return new Promise((resolve, reject) => {
     fs.unlink(fileName, (err) => {
@@ -126,18 +149,33 @@ let checkExistsWithTimeout = function (filePath, timeout) {
   })
 }
 
-let queryBucket = function (photoName, callback) {
+let queryBucket = function (photoName, fileOption) {
   console.log('QUERY BUCKET⚠️')
   return new Promise((resolve, reject) => {
-    let opts = {
-      resources: [
-        `https://screensh.s3.amazonaws.com/photos/${photoName}.jpeg`
-      ],
-      delay: 1000, // initial delay in ms, default 0
-      interval: 100, // poll interval in ms, default 250ms
-      timeout: 100000, // timeout in ms, default Infinity
-      tcpTimeout: 1000, // tcp timeout in ms, default 300ms
-      window: 1000 // stabilization time in ms, default 750ms
+    let opts
+
+    if (fileOption !== 'jpeg') {
+      opts = {
+        resources: [
+          `https://screensh.s3.amazonaws.com/photos/${photoName}.pdf`
+        ],
+        delay: 1000, // initial delay in ms, default 0
+        interval: 100, // poll interval in ms, default 250ms
+        timeout: 100000, // timeout in ms, default Infinity
+        tcpTimeout: 1000, // tcp timeout in ms, default 300ms
+        window: 1000 // stabilization time in ms, default 750ms
+      }
+    } else {
+      opts = {
+        resources: [
+          `https://screensh.s3.amazonaws.com/photos/${photoName}.jpeg`
+        ],
+        delay: 1000, // initial delay in ms, default 0
+        interval: 100, // poll interval in ms, default 250ms
+        timeout: 100000, // timeout in ms, default Infinity
+        tcpTimeout: 1000, // tcp timeout in ms, default 300ms
+        window: 1000 // stabilization time in ms, default 750ms
+      }
     }
 
     // Usage with promises
@@ -159,19 +197,29 @@ router.post('/screenshot', async (req, res, next) => {
   // console.log('❇️req❇️', req);
   // console.log('⚠️res⚠️', res);
   console.log('❇️req❇️', req.body.url, req.body.fileOption, req.body.fullPage)
+  let fullPage = req.body.fullPage
+  let fileOption = req.body.fileOption.toLowerCase()
+  console.log('fileoption', fileOption)
   let photoName = uniqid('screenshot-')
-  let fileName = path.join(__dirname, `/${photoName}.jpeg`)
+  let fileName
+  if (fileOption !== 'jpeg') {
+    // PDF
+    fileName = path.join(__dirname, `/${photoName}.pdf`)
+  } else {
+    // JPG
+    fileName = path.join(__dirname, `/${photoName}.jpeg`)
+  }
 
-  await screenshot(req.body.url, photoName, fileName).then(() => {
+  await screenshot(req.body.url, photoName, fileName, fullPage, fileOption).then(() => {
     console.log('time to check if file exists')
     checkExistsWithTimeout(fileName, 10000)
       .then(() => {
         // upload file to s3
         uploadFile(fileName, photoName).then(() => {
           // query bucket
-          queryBucket(photoName).then(() => {
+          queryBucket(photoName, fileOption).then(() => {
             // delete local file
-            deleteFile(fileName).then(() => {
+            deleteFile(fileName, fileOption).then(() => {
               console.log('sending success response')
               pBar.bar.tick(2)
               res.json({ success: true, photoName: photoName })
