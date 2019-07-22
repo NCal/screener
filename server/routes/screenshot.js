@@ -158,6 +158,7 @@ let queryBucket = function (photoName, callback) {
 router.post('/screenshot', async (req, res, next) => {
   // console.log('❇️req❇️', req);
   // console.log('⚠️res⚠️', res);
+  console.log('❇️req❇️', req.body.url, req.body.fileOption, req.body.fullPage)
   let photoName = uniqid('screenshot-')
   let fileName = path.join(__dirname, `/${photoName}.jpeg`)
 

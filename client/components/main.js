@@ -13,6 +13,8 @@ class main extends React.Component {
       loading: false,
       photoName: null,
       limitError: null,
+      fileOption: 'JPEG',
+      fullPage: true, 
       opacity: 1
     };
   }
@@ -27,6 +29,10 @@ class main extends React.Component {
 
   handleInput = (e) => {
     this.setState({ input: e.target.value })
+  }
+
+  handleCheckbox = (e)=>{ 
+    e.target.checked ? this.setState({fullPage: true}) : this.setState({fullPage: false})
   }
 
   fixProtocol = () => {
@@ -61,6 +67,11 @@ class main extends React.Component {
     this.setState({opacity: 1})
   }
 
+  handleSelectChange = (e) => {
+    console.log('handleSelectChange', e.target.value);
+    this.setState({fileOption: e.target.value})
+  }
+
   screenshot = () => {
     console.log('screenshot');
     console.log('make a call to backend')
@@ -68,7 +79,7 @@ class main extends React.Component {
     this.setState({ loading: true, photoName: null, limitError: null });
     let self = this;
     axios
-      .post('/screenshot', { url: this.state.input })
+      .post('/screenshot', { url: this.state.input, fileOption: this.state.fileOption, fullPage: this.state.fullPage })
       .then(res => {
         console.log('res', res);
 
@@ -100,8 +111,19 @@ class main extends React.Component {
       <div className="App">
       <Link to={'About'} ><span style={{position: 'absolute', top: '10px', left: '10px', display: `${this.state.loading ? 'none' : 'block'}`}}>About</span></Link>
       <p>Enter a Page to Screenshot 🤳</p>
+      <form >
         <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
+        <select onChange={this.handleSelectChange} >
+          <option value="JPEG">JPEG</option>
+          <option value="PDF">PDF</option>
+        </select>
+        <label>
+          Full Page &nbsp;
+          <input disabled={this.state.disabled} type="checkbox" name="fullpage" defaultChecked onChange={this.handleCheckbox}/>
+        </label>
         <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
+        </form>
+
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
         {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto', height: '100px' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
 
