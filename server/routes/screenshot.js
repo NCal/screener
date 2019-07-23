@@ -75,9 +75,10 @@ let screenshot = async function (url, photoName, fileURL, fullPage, fileOption) 
     await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36')
     await page.setJavaScriptEnabled(true)
     await page.setViewport({ width: 1920, height: 1080 })
-    await page.goto(url, {waitUntil: 'networkidle2'})
+
+    await page.goto(url, {waitUntil: 'networkidle0'})
       .then(() => { console.log('✅success finding url✅') })
-      .catch((err) => { console.log('❌error navigating to page❌'); reject(err) })
+      .catch((err) => { console.log('❌error navigating to page❌', err); reject(err) })
     if (fileOption !== 'jpeg') {
       // PDF
       await page.pdf({ path: fileURL }).then((image) => {

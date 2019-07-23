@@ -3938,37 +3938,14 @@ var main = function (_React$Component) {
         'div',
         { className: 'App' },
         _react2.default.createElement(
-          _reactRouterDom.Link,
-          { to: 'About' },
-          _react2.default.createElement(
-            'span',
-            { style: { position: 'absolute', top: '10px', left: '10px', display: '' + (_this.state.loading ? 'none' : 'block') } },
-            'About'
-          )
-        ),
-        _react2.default.createElement(
           'p',
           null,
-          'Enter a Page to Screenshot \uD83E\uDD33'
+          'Simply enter a URL to take a screenshot\uD83E\uDD33'
         ),
         _react2.default.createElement(
           'form',
           null,
           _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'text', value: _this.state.input, onChange: _this.handleInput, onKeyDown: _this.handleKeyDown }),
-          _react2.default.createElement(
-            'select',
-            { onChange: _this.handleSelectChange },
-            _react2.default.createElement(
-              'option',
-              { value: 'JPEG' },
-              'JPEG'
-            ),
-            _react2.default.createElement(
-              'option',
-              { value: 'PDF' },
-              'PDF'
-            )
-          ),
           _react2.default.createElement(
             'label',
             { style: { display: _this.state.fullpageOption !== 'inline' ? 'none' : 'block' } },
@@ -3996,7 +3973,7 @@ var main = function (_React$Component) {
             { style: { marginTop: '15px', marginBottom: '0px' } },
             '\u2705 Success! \u2705'
           ),
-          _react2.default.createElement('iframe', { style: { position: 'relative', top: '20px', border: '4px solid #ffd254', width: '100%', height: '400px' }, src: _this.state.photoName + '?' + Date.now(), alt: 'pdf' })
+          _react2.default.createElement('iframe', { style: { position: 'relative', top: '20px', border: '4px solid #ffd254', width: '100%', height: '400px' }, sandbox: 'allow-popups-to-escape-sandbox', src: _this.state.photoName + '?' + Date.now(), alt: 'pdf' })
         ) : null,
         _this.state.limitError !== null ? _react2.default.createElement(
           'p',
