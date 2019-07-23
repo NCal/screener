@@ -16,7 +16,8 @@ class main extends React.Component {
       fileOption: 'JPEG',
       fullPage: true, 
       fileType: null,
-      opacity: 1
+      opacity: 1,
+      fullpageOption: 'inline'
     };
   }
 
@@ -29,6 +30,11 @@ class main extends React.Component {
   }
 
   handleInput = (e) => {
+    // console.log('e.target.value', e.target.value)
+    // if (e.target.value !== 'JPEG'){
+
+    //   this.setState({input: e.target.value, fullpageOption: 'none'})
+    // }
     this.setState({ input: e.target.value })
   }
 
@@ -69,8 +75,13 @@ class main extends React.Component {
   }
 
   handleSelectChange = (e) => {
+    console.log('e.target.value', e.target.value)
+    if (e.target.value !== 'JPEG'){
+      this.setState({ fileOption: e.target.value, fullpageOption: 'none'})
+    } else {
+      this.setState({ fileOption: e.target.value, fullpageOption: 'inline'})
+    }
     console.log('handleSelectChange', e.target.value);
-    this.setState({fileOption: e.target.value})
   }
 
   screenshot = () => {
@@ -126,9 +137,9 @@ class main extends React.Component {
           <option value="JPEG">JPEG</option>
           <option value="PDF">PDF</option>
         </select>
-        <label>
+          <label style={{ display: this.state.fullpageOption !== 'inline' ? 'none' : 'block'}} >
           Full Page &nbsp;
-          <input disabled={this.state.disabled} type="checkbox" name="fullpage" defaultChecked onChange={this.handleCheckbox}/>
+          <input disabled={this.state.disabled} type="checkbox" name="fullpage" style={{display: this.state.fullpageOption}} defaultChecked onChange={this.handleCheckbox}/>
         </label>
         <input disabled={this.state.disabled} type="button" value="screenshot" onClick={this.fixProtocol}></input>
         </form>

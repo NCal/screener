@@ -3841,6 +3841,11 @@ var main = function (_React$Component) {
     };
 
     _this.handleInput = function (e) {
+      // console.log('e.target.value', e.target.value)
+      // if (e.target.value !== 'JPEG'){
+
+      //   this.setState({input: e.target.value, fullpageOption: 'none'})
+      // }
       _this.setState({ input: e.target.value });
     };
 
@@ -3880,8 +3885,13 @@ var main = function (_React$Component) {
     };
 
     _this.handleSelectChange = function (e) {
+      console.log('e.target.value', e.target.value);
+      if (e.target.value !== 'JPEG') {
+        _this.setState({ fileOption: e.target.value, fullpageOption: 'none' });
+      } else {
+        _this.setState({ fileOption: e.target.value, fullpageOption: 'inline' });
+      }
       console.log('handleSelectChange', e.target.value);
-      _this.setState({ fileOption: e.target.value });
     };
 
     _this.screenshot = function () {
@@ -3961,9 +3971,9 @@ var main = function (_React$Component) {
           ),
           _react2.default.createElement(
             'label',
-            null,
+            { style: { display: _this.state.fullpageOption !== 'inline' ? 'none' : 'block' } },
             'Full Page \xA0',
-            _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'checkbox', name: 'fullpage', defaultChecked: true, onChange: _this.handleCheckbox })
+            _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'checkbox', name: 'fullpage', style: { display: _this.state.fullpageOption }, defaultChecked: true, onChange: _this.handleCheckbox })
           ),
           _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'button', value: 'screenshot', onClick: _this.fixProtocol })
         ),
@@ -4007,7 +4017,8 @@ var main = function (_React$Component) {
       fileOption: 'JPEG',
       fullPage: true,
       fileType: null,
-      opacity: 1
+      opacity: 1,
+      fullpageOption: 'inline'
     };
     return _this;
   }
