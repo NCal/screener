@@ -3888,15 +3888,23 @@ var main = function (_React$Component) {
       console.log('screenshot');
       console.log('make a call to backend');
       var screenshotLink = document.getElementsByClassName('screenshot')[0];
-      _this.setState({ loading: true, photoName: null, limitError: null });
+      _this.setState({ loading: true, photoName: null, limitError: null, fileType: null });
       var self = _this;
       _axios2.default.post('/screenshot', { url: _this.state.input, fileOption: _this.state.fileOption, fullPage: _this.state.fullPage }).then(function (res) {
         console.log('res', res);
 
-        if (res.data.success) {
-          console.log('success screenshot', res.data.photoName);
+        if (res.data.success && res.data.fileType === 'jpeg') {
+          console.log('success screenshot jpeg', res.data.photoName);
           setTimeout(function () {
-            _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.jpeg', disabled: false, error: null });
+            _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.jpeg', disabled: false, error: null, fileType: res.data.fileType });
+          }, 3000);
+        }
+
+        if (res.data.success && res.data.fileType !== 'jpeg') {
+          console.log('success screenshot pdf', res.data.photoName);
+          setTimeout(function () {
+            console.log('should be setting state of pdf');
+            _this.setState({ loading: false, photoName: 'https://screensh.s3.amazonaws.com/photos/' + res.data.photoName + '.pdf', disabled: false, error: null, fileType: res.data.fileType });
           }, 3000);
         }
 
@@ -3960,7 +3968,7 @@ var main = function (_React$Component) {
           _react2.default.createElement('input', { disabled: _this.state.disabled, type: 'button', value: 'screenshot', onClick: _this.fixProtocol })
         ),
         _this.state.loading ? _react2.default.createElement('img', { style: { display: 'block', filter: 'invert(1)', margin: '0 auto', height: '100px' }, src: 'http://aquar.io/images/loading.gif?2cab32044cb72a7a' }) : null,
-        _this.state.photoName ? _react2.default.createElement(
+        _this.state.photoName && _this.state.fileType === 'jpeg' ? _react2.default.createElement(
           'a',
           { href: '' + _this.state.photoName, target: '_blank' },
           _react2.default.createElement(
@@ -3969,6 +3977,16 @@ var main = function (_React$Component) {
             '\u2705 Success! \u2705'
           ),
           _react2.default.createElement('img', { style: { position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: '' + _this.state.opacity }, onMouseLeave: _this.onMouseLeave, onMouseOver: _this.onHover, src: _this.state.photoName + '?' + Date.now(), alt: _this.state.date })
+        ) : null,
+        _this.state.photoName && _this.state.fileType === 'pdf' ? _react2.default.createElement(
+          'a',
+          { href: '' + _this.state.photoName, target: '_blank' },
+          _react2.default.createElement(
+            'p',
+            { style: { marginTop: '15px', marginBottom: '0px' } },
+            '\u2705 Success! \u2705'
+          ),
+          _react2.default.createElement('iframe', { style: { position: 'relative', top: '20px', border: '4px solid #ffd254', width: '100%', height: '400px' }, src: _this.state.photoName + '?' + Date.now(), alt: 'pdf' })
         ) : null,
         _this.state.limitError !== null ? _react2.default.createElement(
           'p',
@@ -3988,6 +4006,7 @@ var main = function (_React$Component) {
       limitError: null,
       fileOption: 'JPEG',
       fullPage: true,
+      fileType: null,
       opacity: 1
     };
     return _this;

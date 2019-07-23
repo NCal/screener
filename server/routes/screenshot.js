@@ -29,14 +29,14 @@ const uploadFile = function (fileName, photoName, fileOption) {
   return new Promise((resolve, reject) => {
     console.log(fileName, photoName)
     fs.readFile(fileName, (err, data) => {
-      console.log('fs.readFILE!!!!')
+      console.log('fs.readFILE!!!!', fileName, fileOption)
       if (err) { console.log('❌error reading upload file !❌'); reject(err) }
       let params
       if (fileOption !== 'jpeg') {
         params = {
           Bucket: 'screensh',
           Key: `photos/${photoName}.pdf`,
-          ContentType: 'image/jpeg',
+          ContentType: 'application/pdf',
           ACL: 'public-read-write',
           Body: data
         }
@@ -215,14 +215,14 @@ router.post('/screenshot', async (req, res, next) => {
     checkExistsWithTimeout(fileName, 10000)
       .then(() => {
         // upload file to s3
-        uploadFile(fileName, photoName).then(() => {
+        uploadFile(fileName, photoName, fileOption).then(() => {
           // query bucket
           queryBucket(photoName, fileOption).then(() => {
             // delete local file
             deleteFile(fileName, fileOption).then(() => {
               console.log('sending success response')
               pBar.bar.tick(2)
-              res.json({ success: true, photoName: photoName })
+              res.json({ success: true, fileType: fileOption, photoName: photoName })
             }).catch(() => {
               console.log(' delete file error')
               res.json({
