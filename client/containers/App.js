@@ -1,5 +1,6 @@
 import React from 'react'
-import { BrowserRouter, Route, Switch, Redirect, IndexRoute } from 'react-router-dom'
+import { Router, Route, Switch, Redirect, IndexRoute } from 'react-router-dom'
+import history from '../helper/history'
 import '../styles/style.scss'
 import Layout from '../components/Layout'
 import Main from '../components/main'
@@ -8,7 +9,7 @@ import About from '../components/About'
 class App extends React.Component {
   render (props) {
     return <div className="container">
-      <BrowserRouter>
+      <Router history={history}>
         <Layout>
           <div className="content-container">
             <Switch>
@@ -18,7 +19,7 @@ class App extends React.Component {
             </Switch>
           </div>
         </Layout>
-      </BrowserRouter>
+      </Router>
     </div>
   }
 }

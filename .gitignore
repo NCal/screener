@@ -1,3 +1,4 @@
 node_modules
 .DS_Store
 localEnv.js
+.elasticbeanstalk/
