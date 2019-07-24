@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link, BrowserRouter } from 'react-router-dom'
 
 export default class Layout extends React.Component {
   constructor (props, context) {
@@ -9,10 +8,15 @@ export default class Layout extends React.Component {
   }
 
   render () {
-    return <div>
-      <div className="body_container">
-        {this.props.children}
+    return (
+      <div>
+        <div
+          className="body_container"
+          style={{ height: '100vh', overflow: 'hidden' }}
+        >
+          {this.props.children}
+        </div>
       </div>
-    </div>
+    );
   }
 }
