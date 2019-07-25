@@ -1,6 +1,7 @@
 // PACKAGES //
 const path = require('path')
 const fs = require('fs')
+const throng = require('throng')
 const express = require('express')
 const logger = require('morgan')
 const bodyParser = require('body-parser')
@@ -10,38 +11,47 @@ const indexRoutes = require('./routes/index')
 // CREATE APP //
 const app = express()
 
-// VIEW ENGINE //
-app.set('view engine', 'html')
-app.engine('html', function (path, options, callback) {
-  fs.readFile(path, 'utf-8', callback)
-})
-app.set('json spaces', 0)
+const WORKERS = process.env.WEB_CONCURRENCY || 1
+throng({
+  workers: WORKERS,
+  lifetime: Infinity
+}, init)
 
-// MIDDLEWARE //
-app.use(express.static(path.join(__dirname, '../client')))
-app.use(logger('dev'))
-app.use(bodyParser.json({limit: '50mb'}))
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
-app.use(bodyParser.json())
-app.use('/static', express.static(path.join(__dirname, 'public')))
+function init () {
+  console.log('✴️init')
+  // VIEW ENGINE //
+  app.set('view engine', 'html')
+  app.engine('html', function (path, options, callback) {
+    fs.readFile(path, 'utf-8', callback)
+  })
+  app.set('json spaces', 0)
 
-// app.get('/download', download)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/index.html'))
-})
+  // MIDDLEWARE //
+  app.use(express.static(path.join(__dirname, '../client')))
+  app.use(logger('dev'))
+  app.use(bodyParser.json({ limit: '50mb' }))
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+  app.use(bodyParser.json())
+  app.use('/static', express.static(path.join(__dirname, 'public')))
 
-// ROUTES //
-app.use('/', indexRoutes)
+  // app.get('/download', download)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/index.html'))
+  })
 
-// ERROR HANDLER //
-app.use(function (err, req, res, next) {
-  console.log(err.stack)
-  res.status(err.status || 500).send('something broke')
-})
+  // ROUTES //
+  app.use('/', indexRoutes)
 
-var env = process.env.NODE_ENV || 'dev'
-var port = process.env.PORT || 3000
-app.listen(port, function () {
-  console.log('ENVIRON', env)
-  console.log('running at localhost:' + port)
-})
+  // ERROR HANDLER //
+  app.use(function (err, req, res, next) {
+    console.log(err.stack)
+    res.status(err.status || 500).send('something broke')
+  })
+
+  var env = process.env.NODE_ENV || 'dev'
+  var port = process.env.PORT || 3000
+  app.listen(port, function () {
+    console.log('ENVIRON', env)
+    console.log('running at localhost:' + port)
+  })
+}
