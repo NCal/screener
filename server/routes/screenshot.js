@@ -160,8 +160,8 @@ let queryBucket = function (photoName, fileOption) {
         resources: [
           `https://screensh.s3.amazonaws.com/photos/${photoName}.pdf`
         ],
-        delay: 1000, // initial delay in ms, default 0
-        interval: 100, // poll interval in ms, default 250ms
+        delay: 0, // initial delay in ms, default 0
+        interval: 250, // poll interval in ms, default 250ms
         timeout: 100000, // timeout in ms, default Infinity
         tcpTimeout: 1000, // tcp timeout in ms, default 300ms
         window: 1000 // stabilization time in ms, default 750ms
@@ -171,8 +171,8 @@ let queryBucket = function (photoName, fileOption) {
         resources: [
           `https://screensh.s3.amazonaws.com/photos/${photoName}.jpeg`
         ],
-        delay: 1000, // initial delay in ms, default 0
-        interval: 100, // poll interval in ms, default 250ms
+        delay: 0, // initial delay in ms, default 0
+        interval: 250, // poll interval in ms, default 250ms
         timeout: 100000, // timeout in ms, default Infinity
         tcpTimeout: 1000, // tcp timeout in ms, default 300ms
         window: 1000 // stabilization time in ms, default 750ms
