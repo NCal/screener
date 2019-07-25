@@ -17,7 +17,7 @@ export default class Layout extends React.Component {
         </Link>
         <div
           className="body_container"
-          style={{ height: '100vh', overflow: 'hidden', backgroundImage: `url('../assets/morning.png')` }}
+          style={{ height: '100vh', overflow: 'hidden' }}
         >
           {this.props.children}
         </div>
