@@ -13,8 +13,7 @@ class About extends React.Component {
 
   render = () => {
     return (
-      <div className="App">
-        <Link to={'/'}><span style={{ position: 'absolute', top: '10px', left: '10px' }}>Home</span></Link>
+      <div className="about">
         <h3>About</h3>
         <p>Simply enter a Url to take a screenshot</p>
       </div>

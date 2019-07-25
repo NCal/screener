@@ -87,6 +87,7 @@ class main extends React.Component {
     console.log('screenshot');
     console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
+    this.props.loadingFunc();
     this.setState({ loading: true, photoName: null, limitError: null, fileType: null });
     let self = this;
     axios
@@ -98,6 +99,7 @@ class main extends React.Component {
           console.log('success screenshot jpeg', res.data.photoName);
           setTimeout(() => {
             this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false, error: null, fileType: res.data.fileType }); 
+            this.props.doneLoading()
           }, 3000);
         }
 
@@ -106,6 +108,7 @@ class main extends React.Component {
           setTimeout(() => {
             console.log('should be setting state of pdf');
             this.setState({ loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.pdf`, disabled: false, error: null, fileType: res.data.fileType });
+            this.props.doneLoading()
           }, 3000);
         }
 
@@ -127,7 +130,8 @@ class main extends React.Component {
 
   render = () => {
     return (
-      <div className="App">
+      <div>
+      <h3 className={'main-title'}>SG</h3>
       {/*<Link to={'About'} ><span style={{position: 'absolute', top: '10px', left: '10px', display: `${this.state.loading ? 'none' : 'block'}`}}>About</span></Link>*/}
       <p>Simply enter a URL to take a screenshot🤳</p>
       <form >
@@ -144,7 +148,9 @@ class main extends React.Component {
         </form>
 
         {/*<input type="button" value="download" onClick={this.download}></input>*/}
-        {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto', height: '100px' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}
+        
+        {this.state.loading ? <div id='loader'></div> : null}
+        {/* {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto', height: '100px' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}*/}
         {this.state.photoName && this.state.fileType === 'jpeg' ? <a  href={`${this.state.photoName}`} target="_blank"><p style={{marginTop: '15px', marginBottom: '0px'}}>✅ Success! ✅</p><img style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: `${this.state.opacity}`}} onMouseLeave={this.onMouseLeave} onMouseOver={this.onHover} src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
         {this.state.photoName && this.state.fileType === 'pdf' ? <a href={`${this.state.photoName}`} target="_blank"><p style={{ marginTop: '15px', marginBottom: '0px' }}>✅ Success! ✅</p><iframe style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', width: '100%', height: '400px' }} sandbox="allow-popups-to-escape-sandbox" src={`${this.state.photoName}?${Date.now()}`} alt='pdf' /></a> : null}
         {this.state.limitError !== null ? <p style={{marginTop: '15px'}}>{this.state.limitError}</p> : null}

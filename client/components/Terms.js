@@ -11,12 +11,7 @@ class About extends React.Component {
 
   render = () => {
     return (
-      <div className="App">
-        <Link to={'/'}>
-          <span style={{ position: 'absolute', top: '10px', left: '10px' }}>
-            Home
-          </span>
-        </Link>
+      <div className="terms" style={{ height: '500px'}}>
         <h3>TERMS OF USE 🔑</h3>
         <h4>Limits</h4>
         <p>
