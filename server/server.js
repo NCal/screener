@@ -27,6 +27,7 @@ function init () {
   app.set('json spaces', 0)
 
   // MIDDLEWARE //
+  // app.use(require('express-force-domain')('https://www.screengrab.net'))
   app.use(express.static(path.join(__dirname, '../client')))
   app.use(logger('dev'))
   app.use(bodyParser.json({ limit: '50mb' }))

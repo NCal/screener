@@ -6,7 +6,7 @@ const { Router } = require('express')
 const router = Router()
 const puppeteer = require('puppeteer')
 const waitOn = require('wait-on')
-const pBar = require('../helper/pBar')
+// const pbar = require('../helper///pbar')
 const uniqid = require('uniqid')
 let s3
 let envVar
@@ -64,7 +64,7 @@ const uploadFile = function (fileName, photoName, fileOption) {
 let screenshot = async function (url, photoName, fileURL, fullPage, fileOption) {
   return new Promise(async (resolve, reject) => {
     console.log('🍑 Screenshot url 🍑', JSON.stringify(url))
-    pBar.bar.tick()
+    // pbar.bar.tick()
     let browser = await puppeteer.launch({
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       headless: true,
@@ -99,7 +99,7 @@ let screenshot = async function (url, photoName, fileURL, fullPage, fileOption) 
 
     // await fullPageScreenshot.default(page, {path: path.join(__dirname, '../public/screenshot.png')})
     console.log('after screenshot')
-    pBar.bar.tick()
+    // pbar.bar.tick()
     await browser.close()
     resolve(photoName)
   })
@@ -111,7 +111,7 @@ let deleteFile = function (fileName, fileOption) {
     fs.unlink(fileName, (err) => {
       if (err) { console.log('❌we have an error deleting the file❌'); reject(err) }
       console.log('✅screenshot was deleted')
-      pBar.bar.tick(2)
+      // pbar.bar.tick(2)
       resolve('screenshot was deleted')
     })
   })
@@ -126,7 +126,7 @@ let checkExistsWithTimeout = function (filePath, timeout) {
 
     fs.access(filePath, fs.constants.R_OK, function (err) {
       if (!err) {
-        pBar.bar.tick(2)
+        // pbar.bar.tick(2)
         clearTimeout(timer)
         watcher.close()
         console.log('✅local file found!✅')
@@ -183,7 +183,7 @@ let queryBucket = function (photoName, fileOption) {
     waitOn(opts)
       .then(function () {
         // once here, all resources are available
-        pBar.bar.tick(2)
+        // pbar.bar.tick(2)
         console.log('✅link should be working now, safe to delete file')
         resolve(photoName)
       })
@@ -222,7 +222,7 @@ router.post('/screenshot', async (req, res, next) => {
             // delete local file
             deleteFile(fileName, fileOption).then(() => {
               console.log('sending success response')
-              pBar.bar.tick(2)
+              // pbar.bar.tick(2)
               res.json({ success: true, fileType: fileOption, photoName: photoName })
             }).catch(() => {
               console.log(' delete file error')
