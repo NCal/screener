@@ -52,7 +52,7 @@ const uploadFile = function (fileName, photoName, fileOption) {
       }
 
       s3.upload(params, function (s3Err, data) {
-        console.log('⚠️ s3 upload', data)
+        console.log('⚠️ s3 upload', s3Err, data)
         if (s3Err) { console.log('❌s3 upload error!❌'); reject(s3Err) } else {
           console.log(`File uploaded successfully at ${data.Location}`)
           resolve(`File uploaded successfully at ${data.Location}`)
