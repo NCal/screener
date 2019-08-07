@@ -1,3 +1,4 @@
+#!/usr/bin/env nodejs
 const { Router } = require('express')
 const pool = require('../../Data/index')
 const router = Router()

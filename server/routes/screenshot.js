@@ -1,3 +1,4 @@
+#!/usr/bin/env nodejs
 const ENV = require('../../env')
 const AWS = require('aws-sdk')
 const fs = require('fs')

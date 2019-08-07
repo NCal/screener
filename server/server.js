@@ -1,3 +1,4 @@
+#!/usr/bin/env nodejs
 // PACKAGES //
 const path = require('path')
 const fs = require('fs')
@@ -53,6 +54,7 @@ function init () {
   var port = process.env.PORT || 3000
   app.listen(port, function () {
     console.log('ENVIRON', env)
+    console.log('PORT🔌', port)
     console.log('running at localhost:' + port)
   })
 }
