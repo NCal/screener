@@ -17,7 +17,7 @@ throng({
   lifetime: Infinity
 }, init)
 
-function init () {
+function init() {
   console.log('✴️init')
   // VIEW ENGINE //
   app.set('view engine', 'html')

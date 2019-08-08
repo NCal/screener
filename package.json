@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "description": "",
   "engines": {},
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "npm-run-all --parallel nodebuild server",
     "dev": "npm-run-all --parallel nodebuild watch dev-server",
     "watch": "webpack-dev-server --progress --inline --hot --history-api-fallback",
     "nodebuild": "webpack --watch",
     "configure": "./Data/configuredb.sh",
-    "server": "NODE_ENV=production nodemon --optimize_for_size --max_old_space_size=460 --gc_interval=100 \"./server/server.js\" --watch \"./server\"",
-    "dev-server": "nodemon --inspect \"./server/server.js\" --watch \"./server\""
+    "server": "NODE_ENV=production nodemon --optimize_for_size --max_old_space_size=460 --gc_interval=100 \"./server/server.js\" --watch \"./server\" --exec \"electron ./server/server.js\"",
+    "dev-server": "nodemon \"./server/server.js\" --watch \"./server\" --exec \"electron ./server/electron.js\""
   },
   "proxy": "http://localhost:3000/",
   "author": "NB",
@@ -31,6 +31,7 @@
     "body-parser": "^1.17.2",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "css-loader": "^0.28.5",
+    "electron": "^6.0.1",
     "express": "^4.15.2",
     "express-rate-limit": "^5.0.0",
     "express-session": "^1.15.6",

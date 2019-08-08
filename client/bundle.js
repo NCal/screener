@@ -3819,7 +3819,7 @@ var App = function (_React$Component) {
               _react2.default.createElement(
                 _reactRouterDom.Switch,
                 null,
-                _react2.default.createElement(_reactRouterDom.Route, { path: '/', exact: true, render: function render(_ref) {
+                _react2.default.createElement(_reactRouterDom.Route, { path: '*', exact: true, render: function render(_ref) {
                     var props = _ref.props,
                         history = _ref.history;
                     return _react2.default.createElement(_main2.default, _extends({ loadingFunc: _this2.loadingFunc, doneLoading: _this2.doneLoading }, props, { history: history }));
@@ -4876,20 +4876,10 @@ var Footer = function (_React$Component) {
       return _react2.default.createElement(
         'footer',
         { className: 'footer' },
-        !_this.props.loading ? _react2.default.createElement(
+        _react2.default.createElement(
           'p',
           null,
-          'Made by NCALMEDIA. By using this site you accept the ',
-          _react2.default.createElement(
-            _reactRouterDom.Link,
-            { to: '/terms' },
-            'terms'
-          ),
-          ' of use.'
-        ) : _react2.default.createElement(
-          'p',
-          null,
-          ' Made by NCALMEDIA. By using this site you accept the terms of use.'
+          'Made by NCALMEDIA.'
         )
       );
     };
@@ -5102,11 +5092,6 @@ var Layout = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(
-          _reactRouterDom.Link,
-          { to: '/', style: { position: 'absolute', top: '20px', left: '20px', zIndex: 1 } },
-          'Home'
-        ),
         _react2.default.createElement(
           'div',
           {
