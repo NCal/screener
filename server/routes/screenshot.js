@@ -11,9 +11,10 @@ const waitOn = require('wait-on')
 const uniqid = require('uniqid')
 let s3
 let envVar
+const LOCALENV = require('../../hidden_env')
+
 if (process.env.NODE_ENV !== 'production') {
   envVar = 'dev'
-  const LOCALENV = require('../../localEnv')
   s3 = new AWS.S3({
     accessKeyId: LOCALENV.accessKeyId,
     secretAccessKey: LOCALENV.secretAccessKey
@@ -21,9 +22,9 @@ if (process.env.NODE_ENV !== 'production') {
 } else {
   envVar = 'production'
   s3 = new AWS.S3({
-    accessKeyId: ENV.accessKeyId,
-    secretAccessKey: ENV.secretAccessKey
-  })
+    accessKeyId: LOCALENV.accessKeyId,
+    secretAccessKey: LOCALENV.secretAccessKey
+  });
 }
 
 const uploadFile = function (fileName, photoName, fileOption) {
