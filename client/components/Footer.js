@@ -13,8 +13,9 @@ export default class Footer extends React.Component {
   render = () => {
     return (
       <footer className="footer">
-        {!this.props.loading ? <p>Made by NCALMEDIA. By using this site you accept the <Link to={'/terms'}>terms</Link> of use.</p> 
-        : <p> Made by NCALMEDIA. By using this site you accept the terms of use.</p> }
+        {/*{!this.props.loading ? <p>Made by NCALMEDIA. By using this site you accept the <Link to={'/terms'}>terms</Link> of use.</p> 
+        : <p> Made by NCALMEDIA. By using this site you accept the terms of use.</p> }*/}
+        <p>Made by NCALMEDIA.</p>
       </footer>
     );
   }

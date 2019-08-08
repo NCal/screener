@@ -12,9 +12,9 @@ export default class Layout extends React.Component {
   render () {
     return (
       <div>
-        <Link to={'/'} style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1 }}>
+        {/*<Link to={'/'} style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1 }}>
             Home
-        </Link>
+        </Link>*/}
         <div
           className="body_container"
           style={{ height: '100vh', overflow: 'hidden' }}
