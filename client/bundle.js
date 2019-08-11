@@ -4876,20 +4876,10 @@ var Footer = function (_React$Component) {
       return _react2.default.createElement(
         'footer',
         { className: 'footer' },
-        !_this.props.loading ? _react2.default.createElement(
+        _react2.default.createElement(
           'p',
           null,
-          'Made by NCALMEDIA. By using this site you accept the ',
-          _react2.default.createElement(
-            _reactRouterDom.Link,
-            { to: '/terms' },
-            'terms'
-          ),
-          ' of use.'
-        ) : _react2.default.createElement(
-          'p',
-          null,
-          ' Made by NCALMEDIA. By using this site you accept the terms of use.'
+          'Made by NCALMEDIA.'
         )
       );
     };
@@ -5028,7 +5018,7 @@ var Info = function (_React$Component) {
     };
 
     _this.state = {
-      collapsed: true
+      collapsed: false
     };
     _this.handleClick = _this.handleClick.bind(_this);
     return _this;
@@ -5102,11 +5092,6 @@ var Layout = function (_React$Component) {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(
-          _reactRouterDom.Link,
-          { to: '/', style: { position: 'absolute', top: '20px', left: '20px', zIndex: 1 } },
-          'Home'
-        ),
         _react2.default.createElement(
           'div',
           {
@@ -5308,6 +5293,8 @@ var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -5429,9 +5416,9 @@ var main = function (_React$Component) {
         'div',
         null,
         _react2.default.createElement(
-          'h3',
+          'h1',
           { className: 'main-title' },
-          'SG'
+          'ScreenGrab'
         ),
         _react2.default.createElement(
           'p',
@@ -5459,7 +5446,7 @@ var main = function (_React$Component) {
             { style: { marginTop: '15px', marginBottom: '0px' } },
             '\u2705 Success! \u2705'
           ),
-          _react2.default.createElement('img', { style: { position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: '' + _this.state.opacity }, onMouseLeave: _this.onMouseLeave, onMouseOver: _this.onHover, src: _this.state.photoName + '?' + Date.now(), alt: _this.state.date })
+          _react2.default.createElement('img', _defineProperty({ alt: 'A screenshot showing a webpage', style: { position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: '' + _this.state.opacity }, onMouseLeave: _this.onMouseLeave, onMouseOver: _this.onHover, src: _this.state.photoName + '?' + Date.now() }, 'alt', _this.state.date))
         ) : null,
         _this.state.photoName && _this.state.fileType === 'pdf' ? _react2.default.createElement(
           'a',

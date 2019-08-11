@@ -16,15 +16,15 @@ const LOCALENV = require('../../hidden_env')
 if (process.env.NODE_ENV !== 'production') {
   envVar = 'dev'
   s3 = new AWS.S3({
-    accessKeyId: LOCALENV.accessKeyId,
-    secretAccessKey: LOCALENV.secretAccessKey
+    accessKeyId: ENV.accessKeyId,
+    secretAccessKey: ENV.secretAccessKey
   })
 } else {
   envVar = 'production'
   s3 = new AWS.S3({
     accessKeyId: LOCALENV.accessKeyId,
     secretAccessKey: LOCALENV.secretAccessKey
-  });
+  })
 }
 
 const uploadFile = function (fileName, photoName, fileOption) {

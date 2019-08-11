@@ -131,7 +131,7 @@ class main extends React.Component {
   render = () => {
     return (
       <div>
-      <h3 className={'main-title'}>SG</h3>
+      <h1 className={'main-title'}>ScreenGrab</h1>
       {/*<Link to={'About'} ><span style={{position: 'absolute', top: '10px', left: '10px', display: `${this.state.loading ? 'none' : 'block'}`}}>About</span></Link>*/}
       <p>Simply enter a URL to take a screenshot🤳</p>
       <form >
@@ -151,7 +151,7 @@ class main extends React.Component {
         
         {this.state.loading ? <div id='loader'></div> : null}
         {/* {this.state.loading ? <img style={{ display: 'block', filter: `invert(1)`, margin: '0 auto', height: '100px' }} src="http://aquar.io/images/loading.gif?2cab32044cb72a7a"/>: null}*/}
-        {this.state.photoName && this.state.fileType === 'jpeg' ? <a  href={`${this.state.photoName}`} target="_blank"><p style={{marginTop: '15px', marginBottom: '0px'}}>✅ Success! ✅</p><img style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: `${this.state.opacity}`}} onMouseLeave={this.onMouseLeave} onMouseOver={this.onHover} src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
+        {this.state.photoName && this.state.fileType === 'jpeg' ? <a  href={`${this.state.photoName}`} target="_blank"><p style={{marginTop: '15px', marginBottom: '0px'}}>✅ Success! ✅</p><img alt="A screenshot showing a webpage" style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: `${this.state.opacity}`}} onMouseLeave={this.onMouseLeave} onMouseOver={this.onHover} src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
         {this.state.photoName && this.state.fileType === 'pdf' ? <a href={`${this.state.photoName}`} target="_blank"><p style={{ marginTop: '15px', marginBottom: '0px' }}>✅ Success! ✅</p><iframe style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', width: '100%', height: '400px' }} sandbox="allow-popups-to-escape-sandbox" src={`${this.state.photoName}?${Date.now()}`} alt='pdf' /></a> : null}
         {this.state.limitError !== null ? <p style={{marginTop: '15px'}}>{this.state.limitError}</p> : null}
 

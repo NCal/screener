@@ -5,7 +5,7 @@ class Info extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: true
+      collapsed: false
     };
     this.handleClick = this.handleClick.bind(this);
   }
