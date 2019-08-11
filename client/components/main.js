@@ -29,7 +29,7 @@ class main extends React.Component {
   }
 
   handleInput = (e) => {
-    // console.log('e.target.value', e.target.value)
+    // //console.log('e.target.value', e.target.value)
     // if (e.target.value !== 'JPEG'){
 
     //   this.setState({input: e.target.value, fullpageOption: 'none'})
@@ -46,7 +46,7 @@ class main extends React.Component {
       this.setState({disabled: true})
 
       if (!/^https?:\/\//i.test(this.state.input)) {
-        console.log('didnt find a protocol');
+        //console.log('didnt find a protocol');
         this.setState({ input: `http://${this.state.input}` });
       }
       
@@ -59,9 +59,9 @@ class main extends React.Component {
   download = () => {
     axios
       .get('/download', {}).then((res) => {
-        console.log('download res image', res.data)
+        //console.log('download res image', res.data)
       }).catch((err) => {
-        console.log('errrrror', err)
+        //console.log('errrrror', err)
       })
   }
 
@@ -74,18 +74,18 @@ class main extends React.Component {
   }
 
   handleSelectChange = (e) => {
-    console.log('e.target.value', e.target.value)
+    //console.log('e.target.value', e.target.value)
     if (e.target.value !== 'JPEG'){
       this.setState({ fileOption: e.target.value, fullpageOption: 'none'})
     } else {
       this.setState({ fileOption: e.target.value, fullpageOption: 'inline'})
     }
-    console.log('handleSelectChange', e.target.value);
+    //console.log('handleSelectChange', e.target.value);
   }
 
   screenshot = () => {
-    console.log('screenshot');
-    console.log('make a call to backend')
+    //console.log('screenshot');
+    //console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
     this.props.loadingFunc();
     this.setState({ loading: true, photoName: null, limitError: null, fileType: null });
@@ -93,10 +93,10 @@ class main extends React.Component {
     axios
       .post('/screenshot', { url: this.state.input, fileOption: this.state.fileOption, fullPage: this.state.fullPage })
       .then(res => {
-        console.log('res', res);
+        //console.log('res', res);
 
         if (res.data.success && res.data.fileType === 'jpeg'){
-          console.log('success screenshot jpeg', res.data.photoName);
+          //console.log('success screenshot jpeg', res.data.photoName);
           setTimeout(() => {
             this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false, error: null, fileType: res.data.fileType }); 
             this.props.doneLoading()
@@ -104,9 +104,9 @@ class main extends React.Component {
         }
 
         if (res.data.success && res.data.fileType !== 'jpeg') {
-          console.log('success screenshot pdf', res.data.photoName);
+          //console.log('success screenshot pdf', res.data.photoName);
           setTimeout(() => {
-            console.log('should be setting state of pdf');
+            //console.log('should be setting state of pdf');
             this.setState({ loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.pdf`, disabled: false, error: null, fileType: res.data.fileType });
             this.props.doneLoading()
           }, 3000);
@@ -114,16 +114,16 @@ class main extends React.Component {
 
         if (!res.data.success){
           this.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' }); 
-          console.log('Failed getting screenshot from url.. 🆘', this.state.input);
+          //console.log('Failed getting screenshot from url.. 🆘', this.state.input);
         }
 
         if (res.data.limitError){
-          console.log('res.data.error', res.data.limitError)
+          //console.log('res.data.error', res.data.limitError)
           this.setState({limitError: res.data.limitError})
         }
       })
       .catch(function (error) {
-        console.log('we hassss an error', error);
+        //console.log('we hassss an error', error);
         self.setState({ loading: false, photoName: null, disabled: false, limitError: 'Failed getting screenshot. Check Url and try again 🆘' }); 
       });
   }

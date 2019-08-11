@@ -4,3 +4,4 @@ localEnv.js
 hidden_env.js
 server_config.txt
 .elasticbeanstalk/
+client/bundle.js
