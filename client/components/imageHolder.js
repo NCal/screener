@@ -14,7 +14,7 @@ export default class ImageHolder extends React.Component {
     console.log('component did mount image holder', this.props.localImages)
     if (this.props.localImages) {
       console.log('this.props.localImages', this.props.localImages)
-      this.setState({ amount: this.props.localImages.length + 1 })
+      this.setState({ amount: this.props.localImages.length })
     }
   }
 
@@ -22,8 +22,9 @@ export default class ImageHolder extends React.Component {
   UNSAFE_componentWillReceiveProps (nextProps) {
     console.log('nextProps', nextProps)
     if (nextProps.localImages !== this.props.localImages) {
+      console.log('should set state');
       this.setState({
-        amount: this.state.amount + 1
+        amount: this.state.amount += 1
       })
     }
   }
@@ -31,9 +32,7 @@ export default class ImageHolder extends React.Component {
   render () {
     return (
       <div className={'image_holder'} >
-        <div className={'image_amount'}>
-          {this.state.amount}
-        </div>
+        {this.state.amount !== 0 ? <div className={'image_amount'}>{this.state.amount}</div> : ''}
       </div>
     )
   }
