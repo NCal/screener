@@ -30,7 +30,7 @@ class App extends React.Component {
       <Router history={history}>
         <Layout>
           <Info/>
-          <div className="content-container" style={{height: '85vh', overflow: 'scroll', paddingBottom: '100px'}}>
+          <div className="content-container" style={{height: '85vh', paddingBottom: '100px'}}>
             <Switch>
               <Route path="/" exact render={({ props, history }) => <Main loadingFunc={this.loadingFunc} doneLoading={this.doneLoading} {...props} history={history} />} />
               {/* <Route path="/about" exact render={({ props, history }) => <About {...props} history={history} />} /> */}

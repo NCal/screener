@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import ImageHolder from './imageHolder'
 
 class main extends React.Component {
   constructor (props){
@@ -16,11 +17,25 @@ class main extends React.Component {
       fullPage: true, 
       fileType: null,
       opacity: 1,
-      fullpageOption: 'inline'
+      fullpageOption: 'inline',
+      localImages: []
     };
   }
 
-  componentDidMount(){}
+  componentWillMount(){
+    console.log('component did mount');
+    // SET LOCAL STORAGE
+    if (!localStorage._screengrab){
+      localStorage.setItem('_screengrab', JSON.stringify({ images: [] }))
+    }
+
+
+    if (JSON.parse(localStorage._screengrab).images.length){
+      console.log('we should display images', JSON.parse(localStorage._screengrab).images)
+      this.setState({localImages: JSON.parse(localStorage._screengrab).images})  
+    }
+    
+  }
 
   handleKeyDown = (e) => {
     if (e.key == 'Enter') {
@@ -83,13 +98,27 @@ class main extends React.Component {
     //console.log('handleSelectChange', e.target.value);
   }
 
+  setLocalStorage = () => {
+    let localImages
+    console.log('Local storage func');
+     localImages = JSON.parse(localStorage.getItem('_screengrab')).images
+     localImages.push(this.state.photoName)
+     console.log('local Images', localImages)
+     this.setState({localImages}, ()=>{
+      localStorage.setItem(
+        '_screengrab',
+        JSON.stringify({ images: this.state.localImages })
+      )
+     })
+  }
+
   screenshot = () => {
     //console.log('screenshot');
     //console.log('make a call to backend')
     let screenshotLink = document.getElementsByClassName('screenshot')[0];
     this.props.loadingFunc();
     this.setState({ loading: true, photoName: null, limitError: null, fileType: null });
-    let self = this;
+    let self = this
     axios
       .post('/screenshot', { url: this.state.input, fileOption: this.state.fileOption, fullPage: this.state.fullPage })
       .then(res => {
@@ -98,7 +127,10 @@ class main extends React.Component {
         if (res.data.success && res.data.fileType === 'jpeg'){
           //console.log('success screenshot jpeg', res.data.photoName);
           setTimeout(() => {
-            this.setState({loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false, error: null, fileType: res.data.fileType }); 
+            this.setState({ loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.jpeg`, disabled: false, error: null, fileType: res.data.fileType },()=>{
+              // Set local storage func
+             this.setLocalStorage()
+            }); 
             this.props.doneLoading()
           }, 3000);
         }
@@ -107,7 +139,10 @@ class main extends React.Component {
           //console.log('success screenshot pdf', res.data.photoName);
           setTimeout(() => {
             //console.log('should be setting state of pdf');
-            this.setState({ loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.pdf`, disabled: false, error: null, fileType: res.data.fileType });
+            this.setState({ loading: false, photoName: `https://screensh.s3.amazonaws.com/photos/${res.data.photoName}.pdf`, disabled: false, error: null, fileType: res.data.fileType },()=>{
+              // Set local storage func
+              this.setLocalStorage()
+            });
             this.props.doneLoading()
           }, 3000);
         }
@@ -130,12 +165,12 @@ class main extends React.Component {
 
   render = () => {
     return (
-      <div>
+      <div style={{width: '100%'}}>
       <h1 className={'main-title'}>ScreenGrab</h1>
       {/*<Link to={'About'} ><span style={{position: 'absolute', top: '10px', left: '10px', display: `${this.state.loading ? 'none' : 'block'}`}}>About</span></Link>*/}
       <p>Simply enter a URL to take a screenshot🤳</p>
       <form >
-        <input disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
+        <input className="search_input" disabled={this.state.disabled} type="text" value={this.state.input} onChange={this.handleInput} onKeyDown={this.handleKeyDown}></input>
         {/*<select onChange={this.handleSelectChange} >
           <option value="JPEG">JPEG</option>
           <option value="PDF">PDF</option>
@@ -154,8 +189,7 @@ class main extends React.Component {
         {this.state.photoName && this.state.fileType === 'jpeg' ? <a  href={`${this.state.photoName}`} target="_blank"><p style={{marginTop: '15px', marginBottom: '0px'}}>✅ Success! ✅</p><img alt="A screenshot showing a webpage" style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', opacity: `${this.state.opacity}`}} onMouseLeave={this.onMouseLeave} onMouseOver={this.onHover} src={`${this.state.photoName}?${Date.now()}`} alt={this.state.date}/></a> : null}
         {this.state.photoName && this.state.fileType === 'pdf' ? <a href={`${this.state.photoName}`} target="_blank"><p style={{ marginTop: '15px', marginBottom: '0px' }}>✅ Success! ✅</p><iframe style={{ position: 'relative', top: '20px', border: '4px solid #ffd254', width: '100%', height: '400px' }} sandbox="allow-popups-to-escape-sandbox" src={`${this.state.photoName}?${Date.now()}`} alt='pdf' /></a> : null}
         {this.state.limitError !== null ? <p style={{marginTop: '15px'}}>{this.state.limitError}</p> : null}
-
-
+        <ImageHolder localImages={this.state.localImages}/>
       </div>
     );
   }
