@@ -34,9 +34,7 @@ export default class ImageHolder extends React.Component {
     return (
       <div className={'image_holder'} >
         {this.state.amount !== 0 ? <div onClick={() => { console.log('this.state.localImages', this.state.localImages) }} className={'image_amount'}>{this.state.amount}</div> : ''}
-        {/*{this.state.localImages.map((image, index) => {
-          <div key={index}>hi</div>
-        })} */}
+        {this.state.localImages !== null ? this.state.localImages.map((image, index) => { return <div key={`${index}`} style={{width: '100px', cursor: 'pointer', height: '100px', backgroundSize: 'contain', backgroundImage:`url(${image.image})`,  backgroundRepeat: 'no-repeat'}}></div> }) : ''}
       </div>
     )
   }
