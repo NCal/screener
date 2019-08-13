@@ -7,24 +7,25 @@ export default class ImageHolder extends React.Component {
     super(props, context)
 
     console.log('image holder', this.props)
-    this.state = {amount: null}
+    this.state = {amount: null, localImages: null}
   }
 
   componentDidMount () {
     console.log('component did mount image holder', this.props.localImages)
     if (this.props.localImages) {
       console.log('this.props.localImages', this.props.localImages)
-      this.setState({ amount: this.props.localImages.length })
+      this.setState({ amount: this.props.localImages.length, localImages: this.props.localImages })
     }
   }
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps (nextProps) {
-    console.log('nextProps', nextProps)
+    // console.log('nextProps', nextProps)
     if (nextProps.localImages !== this.props.localImages) {
-      console.log('should set state');
+      console.log('should set state')
       this.setState({
-        amount: this.state.amount += 1
+        amount: this.state.amount += 1,
+        localImages: nextProps.localImages
       })
     }
   }
@@ -32,7 +33,10 @@ export default class ImageHolder extends React.Component {
   render () {
     return (
       <div className={'image_holder'} >
-        {this.state.amount !== 0 ? <div className={'image_amount'}>{this.state.amount}</div> : ''}
+        {this.state.amount !== 0 ? <div onClick={() => { console.log('this.state.localImages', this.state.localImages) }} className={'image_amount'}>{this.state.amount}</div> : ''}
+        {/*{this.state.localImages.map((image, index) => {
+          <div key={index}>hi</div>
+        })} */}
       </div>
     )
   }

@@ -28,11 +28,22 @@ class main extends React.Component {
     if (!localStorage._screengrab){
       localStorage.setItem('_screengrab', JSON.stringify({ images: [] }))
     }
+    let images = JSON.parse(localStorage._screengrab).images;
+    var newLocalImages = [];
+    if (images.length){
+      // remove shit thats more than a day old here: 
+        images.forEach((image)=>{
+          if (image.limit > image.date) {
+            console.log('The yourDate time is less than 1 days from now')
+            newLocalImages.push(image);
+          }
+        })
+
+        console.log('newLocalImages', newLocalImages)
 
 
-    if (JSON.parse(localStorage._screengrab).images.length){
       console.log('we should display images', JSON.parse(localStorage._screengrab).images)
-      this.setState({localImages: JSON.parse(localStorage._screengrab).images})  
+      this.setState({localImages: newLocalImages})  
     }
     
   }
@@ -102,9 +113,13 @@ class main extends React.Component {
     let localImages
     console.log('Local storage func');
      localImages = JSON.parse(localStorage.getItem('_screengrab')).images
-     localImages.push(this.state.photoName)
+     localImages.push({
+       image: this.state.photoName,
+       date: new Date().getTime(),
+       limit: new Date().getTime() + 1 * 24 * 60 * 60 * 1000
+     })
      console.log('local Images', localImages)
-     this.setState({localImages}, ()=>{
+     this.setState({localImages}, () => {
       localStorage.setItem(
         '_screengrab',
         JSON.stringify({ images: this.state.localImages })
